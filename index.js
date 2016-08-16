@@ -1,4 +1,5 @@
 const { createStore, combineReducers } = require('redux');
+const { createSelector } = require('reselect');
 const chalk = require('chalk');
 const logUpdate = require('log-update');
 const readline = require('readline');
@@ -19,6 +20,8 @@ const submit = () => ({ type: SUBMIT });
 // Reducers:
 
 const initialState = {
+	prompt: '›',
+	placeholder: 'start typing',
 	characters: [],
 };
 
@@ -41,20 +44,35 @@ const input = (state = initialState, action) => {
 	}
 };
 
+// Selectors:
+
+const selectInput = state => state.input;
+const selectPrompt = state => state.input.prompt;
+const selectPlaceholder = state => state.input.placeholder;
+const selectCharacters = state => state.input.characters;
+const selectStyledInput = createSelector(
+	selectPrompt,
+	selectPlaceholder,
+	selectCharacters,
+	(prompt, placeholder, characters) => {
+		const styledPrompt = chalk.bold.yellow(prompt);
+		const styledPlaceholder = chalk.dim(placeholder);
+		const styledCharacters = chalk.bold.yellow(characters.join(''));
+		const styledText = characters.length > 0 ? styledCharacters : styledPlaceholder
+		return `${styledPrompt} ${styledText}`;
+	}
+);
+
+// Initialize store:
+
 const rootReducer = combineReducers({
 	input,
 });
 const store = createStore(rootReducer);
 
-const render = () => {
-	const prompt = chalk.bold.cyan('›');
-	const placeholder = chalk.dim('start typing');
-	const characters = store.getState().input.characters;
-	const text = characters.length > 0 ? characters.join('') : placeholder;
-	logUpdate(`${prompt} ${text}`);
-};
-
 // Render once initially and every time the store changes:
+
+const render = () => logUpdate(selectStyledInput(store.getState()));
 store.subscribe(render);
 render();
 

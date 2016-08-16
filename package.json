@@ -15,6 +15,7 @@
     "emojigotchi-emojis": "../emojigotchi-emojis",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "reselect": "^2.5.3"
   }
 }
