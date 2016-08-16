@@ -1,0 +1,17 @@
+{
+  "name": "emojigotchi-cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "emojigotchi cli",
+  "author": "Andreas Tietz https://github.com/dematerializer",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npm link emojigotchi-core emojigotchi-emojis",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ansi-color": "^0.2.1",
+    "emojigotchi-core": "../emojigotchi-core",
+    "emojigotchi-emojis": "../emojigotchi-emojis"
+  }
+}
