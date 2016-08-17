@@ -1,72 +1,18 @@
-const { createStore, combineReducers } = require('redux');
-const { createSelector } = require('reselect');
-const chalk = require('chalk');
+// index
+
+const { combineReducers, createStore } = require('redux');
 const logUpdate = require('log-update');
 const readline = require('readline');
 const hasAnsi = require('has-ansi');
 
-// Action constants:
+const inputReducer = require('./lib/input/reducer');
+const { addCharacter, removeCharacter, submit } = require('./lib/input/actions');
+const { selectStyledInput } = require('./lib/input/selectors');
 
-const ADD_CHARACTER = 'ADD_CHARACTER';
-const REMOVE_CHARACTER = 'REMOVE_CHARACTER';
-const SUBMIT = 'SUBMIT';
-
-// Action creators:
-
-const addCharacter = character => ({ type: ADD_CHARACTER, character });
-const removeCharacter = () => ({ type: REMOVE_CHARACTER });
-const submit = () => ({ type: SUBMIT });
-
-// Reducers:
-
-const initialState = {
-	prompt: '›',
-	placeholder: 'start typing',
-	characters: [],
-};
-
-const input = (state = initialState, action) => {
-	switch (action.type) {
-		case ADD_CHARACTER:
-			return Object.assign({}, state, {
-				characters: [...state.characters, action.character]
-			});
-		case REMOVE_CHARACTER:
-			return Object.assign({}, state, {
-				characters: state.characters.slice(0, -1),
-			});
-		case SUBMIT:
-			return Object.assign({}, state, {
-				characters: [],
-			});
-		default:
-			return state;
-	}
-};
-
-// Selectors:
-
-const selectInput = state => state.input;
-const selectPrompt = state => state.input.prompt;
-const selectPlaceholder = state => state.input.placeholder;
-const selectCharacters = state => state.input.characters;
-const selectStyledInput = createSelector(
-	selectPrompt,
-	selectPlaceholder,
-	selectCharacters,
-	(prompt, placeholder, characters) => {
-		const styledPrompt = chalk.bold.yellow(prompt);
-		const styledPlaceholder = chalk.dim(placeholder);
-		const styledCharacters = chalk.bold.yellow(characters.join(''));
-		const styledText = characters.length > 0 ? styledCharacters : styledPlaceholder
-		return `${styledPrompt} ${styledText}`;
-	}
-);
-
-// Initialize store:
+// Configure store:
 
 const rootReducer = combineReducers({
-	input,
+	input: inputReducer,
 });
 const store = createStore(rootReducer);
 
