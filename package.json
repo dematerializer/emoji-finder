@@ -13,6 +13,7 @@
     "chalk": "^1.1.3",
     "emojigotchi-core": "../emojigotchi-core",
     "emojigotchi-emojis": "../emojigotchi-emojis",
+    "fuzzy": "^0.1.1",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
     "redux": "^3.5.2",
