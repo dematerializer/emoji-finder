@@ -6,14 +6,14 @@
   "author": "Andreas Tietz https://github.com/dematerializer",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm link emojigotchi-core emojigotchi-data",
+    "preinstall": "npm link emojigotchi-core unicode-emoji-data",
     "start": "node index.js"
   },
   "dependencies": {
     "chalk": "^1.1.3",
     "copy-paste": "^1.3.0",
     "emojigotchi-core": "../emojigotchi-core",
-    "emojigotchi-data": "../emojigotchi-data",
+    "unicode-emoji-data": "../unicode-emoji-data",
     "fuse.js": "^2.4.1",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
