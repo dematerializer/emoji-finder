@@ -13,12 +13,11 @@
     "chalk": "^1.1.3",
     "copy-paste": "^1.3.0",
     "emojigotchi-core": "../emojigotchi-core",
-    "unicode-emoji-data": "../unicode-emoji-data",
-    "fuse.js": "^2.4.1",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
     "redux": "^3.5.2",
-    "reselect": "^2.5.3"
+    "reselect": "^2.5.3",
+    "unicode-emoji-data": "../unicode-emoji-data"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.13.2",
