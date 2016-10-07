@@ -13,6 +13,7 @@
     "chalk": "^1.1.3",
     "copy-paste": "^1.3.0",
     "emojigotchi-core": "../emojigotchi-core",
+    "fuzzaldrin": "^2.1.0",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
     "redux": "^3.5.2",
