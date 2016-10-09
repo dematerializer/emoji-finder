@@ -2,7 +2,7 @@
 
 import { createSelector } from 'reselect';
 
-import { findEmoji } from './search';
+import findEmoji from './search';
 
 import {
 	ADD_CHARACTER,
