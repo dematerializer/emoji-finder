@@ -10,6 +10,7 @@ import {
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
+	MAX_RESULTS,
 } from './constants';
 
 // Returns the search term as a string:
@@ -26,7 +27,7 @@ const selectSuggestedEmojiForQuery = () => createSelector(
 // number of results while enabling it to cycle:
 const restrictSelectedSuggestionIndex = (state, index) => {
 	const resultLength = state.suggestedEmoji(state).length; // memoized
-	const maxIndex = Math.min(resultLength - 1, 7 - 1); // TODO: extract 7
+	const maxIndex = Math.min(resultLength - 1, MAX_RESULTS - 1);
 	let movedIndex = index;
 	if (movedIndex > maxIndex) {
 		movedIndex = 0;
