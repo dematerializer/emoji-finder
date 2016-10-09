@@ -29,7 +29,7 @@ const selectSubmittedEmoji = createSelector(
 
 const selectPlaceholder = createSelector(
 	selectSubmittedEmoji,
-	submittedEmoji => submittedEmoji.length > 0 ? '⌫ , ⏎' : ''
+	submittedEmoji => (submittedEmoji.length > 0 ? '⌫ , ⏎' : '')
 );
 
 const selectSuggestedEmoji = createSelector(
@@ -38,7 +38,7 @@ const selectSuggestedEmoji = createSelector(
 	(currentQuery, selectedSuggestionIndex) =>
 		currentQuery.suggestedEmoji(currentQuery) // need to pass in the query state explicitly
 		.map((result, index) => {
-			const unselectedEmoji = result.output + ' ';
+			const unselectedEmoji = `${result.output} `;
 			const selectedEmoji = chalk.underline.yellow(unselectedEmoji);
 			return (index === selectedSuggestionIndex) ? selectedEmoji : unselectedEmoji;
 		})
@@ -51,7 +51,7 @@ const selectStyledInput = createSelector(
 	selectPlaceholder,
 	selectSuggestedEmoji,
 	(submittedEmoji, currentQuerySearchTerm, placeholder, suggestedEmoji) => {
-		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (submittedEmoji.join('  ') + '  ') : '';
+		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
 		const styledPlaceholder = chalk.dim(placeholder);

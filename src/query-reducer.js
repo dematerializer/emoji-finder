@@ -2,18 +2,18 @@
 
 import { createSelector } from 'reselect';
 
-import { findEmoji } from '../utils/search';
+import { findEmoji } from './search';
 
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
-	SELECT_SUGGESTION_LEFT,
-	SELECT_SUGGESTION_RIGHT,
+	SELECT_NEXT_SUGGESTION,
+	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 } from './constants';
 
 // Returns the search term as a string:
-const selectSearchTerm = (state) => state.searchTerm.join('');
+const selectSearchTerm = state => state.searchTerm.join('');
 
 // Creates a memoized selector that returns a list
 // of emoji that match the current search term:
@@ -60,9 +60,9 @@ export default function reducer(state = initialState, action) {
 			// Update search term and reset selection:
 			return {
 				...state,
-				searchTerm: [ ...state.searchTerm, action.character ],
+				searchTerm: [...state.searchTerm, action.character],
 				selectedSuggestionIndex: 0,
-			}
+			};
 		// The last character of the search term is being removed:
 		case REMOVE_CHARACTER:
 			// Update search term and reset selection:
@@ -70,22 +70,22 @@ export default function reducer(state = initialState, action) {
 				...state,
 				searchTerm: state.searchTerm.slice(0, -1),
 				selectedSuggestionIndex: 0,
-			}
+			};
 		// Next suggestion is being selected:
-		case SELECT_SUGGESTION_LEFT: {
-			const index = restrictSelectedSuggestionIndex(state, state.selectedSuggestionIndex - 1);
-			return {
-				...state,
-				selectedSuggestionIndex: index,
-			}
-		}
-		// Previous suggestion is being selected:
-		case SELECT_SUGGESTION_RIGHT: {
+		case SELECT_NEXT_SUGGESTION: {
 			const index = restrictSelectedSuggestionIndex(state, state.selectedSuggestionIndex + 1);
 			return {
 				...state,
 				selectedSuggestionIndex: index,
-			}
+			};
+		}
+		// Previous suggestion is being selected:
+		case SELECT_PREVIOUS_SUGGESTION: {
+			const index = restrictSelectedSuggestionIndex(state, state.selectedSuggestionIndex - 1);
+			return {
+				...state,
+				selectedSuggestionIndex: index,
+			};
 		}
 		// Submit emoji based on inputted search term and selected suggestion:
 		case SUBMIT: {

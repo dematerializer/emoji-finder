@@ -3,9 +3,9 @@
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
-	SELECT_SUGGESTION_LEFT,
-	SELECT_SUGGESTION_RIGHT,
-	SUBMIT
+	SELECT_NEXT_SUGGESTION,
+	SELECT_PREVIOUS_SUGGESTION,
+	SUBMIT,
 } from './constants';
 
 export const addCharacter = character => ({
@@ -17,12 +17,12 @@ export const removeCharacter = () => ({
 	type: REMOVE_CHARACTER,
 });
 
-export const selectSuggestionLeft = () => ({
-	type: SELECT_SUGGESTION_LEFT,
+export const selectNextSuggestion = () => ({
+	type: SELECT_NEXT_SUGGESTION,
 });
 
-export const selectSuggestionRight = () => ({
-	type: SELECT_SUGGESTION_RIGHT,
+export const selectPreviousSuggestion = () => ({
+	type: SELECT_PREVIOUS_SUGGESTION,
 });
 
 export const submit = () => ({

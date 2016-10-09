@@ -11,7 +11,7 @@ const annotationsForSequence = [
 	cldrAnnotations,
 	communityAnnotations,
 	universalCommunityAnnotations,
-].map((annotations) =>
+].map(annotations =>
 	annotations.reduce((annotationForSequence, annotation) => {
 		const extAnnotationForSequence = annotationForSequence;
 		extAnnotationForSequence[annotation.sequence] = annotation;
@@ -27,11 +27,12 @@ const annotatedEmoji = emoji.map((datum) => {
 		annotationForSequence[normalizedSequence]
 	);
 	const combinedAnnotation = annotationsForNormalizedSequence.reduce((combined, current) => {
+		const extCombined = combined;
 		if (current != null) {
-			combined.tts = combined.tts.concat(current.tts || []);
-			combined.keywords = combined.keywords.concat(current.keywords || []);
+			extCombined.tts = extCombined.tts.concat(current.tts || []);
+			extCombined.keywords = extCombined.keywords.concat(current.keywords || []);
 		}
-		return combined;
+		return extCombined;
 	}, {
 		tts: [],
 		keywords: [],
@@ -42,10 +43,10 @@ const annotatedEmoji = emoji.map((datum) => {
 	return {
 		search: `${combinedAnnotation.tts.join(' ')} ${combinedAnnotation.keywords.join(' ')}`,
 		...datum,
-	}
+	};
 }).filter(datum => datum.search != null);
 
-export const findEmoji = (query) => {
+export default function findEmoji(query) {
 	if (query.trim().length === 0) {
 		return [];
 	}

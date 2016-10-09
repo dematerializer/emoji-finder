@@ -5,15 +5,15 @@ import logUpdate from 'log-update';
 import readline from 'readline';
 import hasAnsi from 'has-ansi';
 
-import inputReducer from './input/reducer';
+import inputReducer from './reducer';
 import {
 	addCharacter,
 	removeCharacter,
-	selectSuggestionLeft,
-	selectSuggestionRight,
+	selectNextSuggestion,
+	selectPreviousSuggestion,
 	submit,
-} from './input/actions';
-import { selectStyledInput } from './input/selectors';
+} from './actions';
+import { selectStyledInput } from './selectors';
 
 // Configure store:
 
@@ -39,12 +39,11 @@ render();
 readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 process.stdin.on('keypress', (character, key) => {
-
 	// Navigate suggestions with (shift+)tab or arrow keys:
 	if (key.name === 'left' || (key.shift && key.name === 'tab')) {
-		store.dispatch(selectSuggestionLeft());
+		store.dispatch(selectPreviousSuggestion());
 	} else if (key.name === 'right' || key.name === 'tab') {
-		store.dispatch(selectSuggestionRight());
+		store.dispatch(selectNextSuggestion());
 	}
 
 	// Don't process ANSI input and tabs any further:

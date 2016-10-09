@@ -1,0 +1,19 @@
+{
+  "parser": "babel-eslint",
+  "extends": "eslint-config-airbnb-base",
+  "env": {
+    "node": true,
+    "mocha": true,
+  },
+  "globals": {
+    "fetch": true,
+    "expect": true,
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": "off",
+    "no-tabs": "off",
+    "indent": ["error", "tab", { "SwitchCase": 1 }],
+    "max-len": "off",
+    "no-console": "off"
+  }
+}

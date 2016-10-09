@@ -7,8 +7,8 @@ import chalk from 'chalk';
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
-	SELECT_SUGGESTION_LEFT,
-	SELECT_SUGGESTION_RIGHT,
+	SELECT_NEXT_SUGGESTION,
+	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 } from './constants';
 import queryReducer from './query-reducer';
@@ -19,12 +19,12 @@ const initialState = {
 	// resulting in an single emoji:
 	queries: [
 		// First empty query to start with:
-		queryReducer(undefined, { type: 'INIT'}),
+		queryReducer(undefined, { type: 'INIT' }),
 	],
 };
 
 // Returns the most recent query:
-const selectCurrentQuery = (state) => state.queries[state.queries.length - 1];
+const selectCurrentQuery = state => state.queries[state.queries.length - 1];
 
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
@@ -36,7 +36,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					(query === currentQuery) ? queryReducer(currentQuery, action) : query
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
 			};
 		}
@@ -49,38 +49,37 @@ export default function reducer(state = initialState, action) {
 					...state,
 					queries: state.queries.slice(0, -1),
 				};
+			}
 			// As long as there's a character in the current query's search term,
 			// let it handle the action and update it's state with the new result:
-			} else {
-				return {
-					...state,
-					queries: state.queries.map(query =>
-						(query === currentQuery) ? queryReducer(currentQuery, action) : query
-					),
-				};
-			}
+			return {
+				...state,
+				queries: state.queries.map(query =>
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
+				),
+			};
 		}
 		// Next suggestion is being selected:
-		case SELECT_SUGGESTION_LEFT: {
+		case SELECT_NEXT_SUGGESTION: {
 			// Let the current query handle the action
 			// and update it's state with the new result:
 			const currentQuery = selectCurrentQuery(state);
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					(query === currentQuery) ? queryReducer(currentQuery, action) : query
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
 			};
 		}
 		// Previous suggestion is being selected:
-		case SELECT_SUGGESTION_RIGHT: {
+		case SELECT_PREVIOUS_SUGGESTION: {
 			// Let the current query handle the action
 			// and update it's state with the new result:
 			const currentQuery = selectCurrentQuery(state);
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					(query === currentQuery) ? queryReducer(currentQuery, action) : query
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
 			};
 		}
@@ -94,11 +93,11 @@ export default function reducer(state = initialState, action) {
 			// state with the new result and initialize a new query:
 			if (searchTermLength > 0 && currentQuery.suggestedEmoji(currentQuery).length > 0) {
 				const updatedQueries = state.queries.map(query =>
-					(query === currentQuery) ? queryReducer(currentQuery, action) : query
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				);
 				return {
 					...state,
-					queries: [ ...updatedQueries, queryReducer(undefined, { type: 'INIT' }) ],
+					queries: [...updatedQueries, queryReducer(undefined, { type: 'INIT' })],
 				};
 			// Submit the sequence of submitted emoji:
 			// If at least one query contains a sumbitted emoji,
