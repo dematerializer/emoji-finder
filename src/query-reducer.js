@@ -31,7 +31,7 @@ const initialState = {
 	// Index of the user-selected emoji from the
 	// list of suggestions for the search term:
 	selectedSuggestionIndex: 0,
-	// Resulting emoji:
+	// Resulting 'submitted' emoji:
 	emoji: null,
 	// Memoized selector for this query instance:
 	suggestedEmoji: createSelectSuggestedEmojiForQuery(),
