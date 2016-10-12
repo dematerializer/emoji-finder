@@ -2,8 +2,7 @@
 
 import { createSelector } from 'reselect';
 import chalk from 'chalk';
-
-import { MAX_RESULTS } from './constants';
+import { selectSearchTerm as selectSearchTermForQuery } from './query-selectors';
 
 const selectQueries = state => state.input.queries;
 
@@ -14,7 +13,7 @@ const selectCurrentQuery = createSelector(
 
 const selectCurrentQuerySearchTerm = createSelector(
 	selectCurrentQuery,
-	currentQuery => currentQuery.searchTerm.join('')
+	currentQuery => selectSearchTermForQuery(currentQuery)
 );
 
 const selectCurrentQuerySelectedSuggestionIndex = createSelector(
@@ -44,7 +43,6 @@ const selectSuggestedEmoji = createSelector(
 			const selectedEmoji = chalk.underline.yellow(unselectedEmoji);
 			return (index === selectedSuggestionIndex) ? selectedEmoji : unselectedEmoji;
 		})
-		.slice(0, MAX_RESULTS)
 );
 
 const selectStyledInput = createSelector(

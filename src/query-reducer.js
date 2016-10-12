@@ -1,40 +1,27 @@
 // input query reducer
 
-import { createSelector } from 'reselect';
-
-import findEmoji from './search';
-
+import { createSelectSuggestedEmojiForQuery } from './query-selectors';
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
-	MAX_RESULTS,
 } from './constants';
 
-// Returns the search term as a string:
-const selectSearchTerm = state => state.searchTerm.join('');
-
-// Creates a memoized selector that returns a list
-// of emoji that match the current search term:
-const selectSuggestedEmojiForQuery = () => createSelector(
-	selectSearchTerm,
-	searchTerm => findEmoji(searchTerm)
-);
-
-// Clamps a given index between 0 and the max
-// number of results while enabling it to cycle:
-const restrictSelectedSuggestionIndex = (state, index) => {
-	const resultLength = state.suggestedEmoji(state).length; // memoized
-	const maxIndex = Math.min(resultLength - 1, MAX_RESULTS - 1);
+// Clamps a given value between (including) min and max, cycling if out of bounds:
+const clamp = (index, min, max) => {
 	let movedIndex = index;
-	if (movedIndex > maxIndex) {
-		movedIndex = 0;
-	} else if (movedIndex < 0) {
-		movedIndex = maxIndex;
+	if (movedIndex > max) {
+		movedIndex = min;
+	} else if (movedIndex < min) {
+		movedIndex = max;
 	}
 	return movedIndex;
+};
+
+export const internals = {
+	clamp,
 };
 
 // Initial state of a newly created query:
@@ -47,26 +34,29 @@ const initialState = {
 	// Resulting emoji:
 	emoji: null,
 	// Memoized selector for this query instance:
-	suggestedEmoji: selectSuggestedEmojiForQuery(),
+	suggestedEmoji: createSelectSuggestedEmojiForQuery(),
 };
 
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
-		// A character is being typed:
+		// A character is being added:
 		case ADD_CHARACTER:
 			// Ignore subsequent spaces:
 			if (action.character === ' ' && state.searchTerm[state.searchTerm.length - 1] === action.character) {
 				return state;
 			}
-			// Update search term and reset selection:
+			// Add character to search term and reset selected suggestion:
 			return {
 				...state,
 				searchTerm: [...state.searchTerm, action.character],
 				selectedSuggestionIndex: 0,
 			};
-		// The last character of the search term is being removed:
+		// The last added character is being removed:
 		case REMOVE_CHARACTER:
-			// Update search term and reset selection:
+			if (state.searchTerm.length === 0) {
+				return state;
+			}
+			// Remove character from search term and reset selected suggestion:
 			return {
 				...state,
 				searchTerm: state.searchTerm.slice(0, -1),
@@ -74,7 +64,11 @@ export default function reducer(state = initialState, action) {
 			};
 		// Next suggestion is being selected:
 		case SELECT_NEXT_SUGGESTION: {
-			const index = restrictSelectedSuggestionIndex(state, state.selectedSuggestionIndex + 1);
+			const maxIndex = state.suggestedEmoji(state).length - 1; // memoized
+			if (maxIndex === -1) { // skip when there are no suggestions
+				return state;
+			}
+			const index = clamp(state.selectedSuggestionIndex + 1, 0, maxIndex);
 			return {
 				...state,
 				selectedSuggestionIndex: index,
@@ -82,21 +76,27 @@ export default function reducer(state = initialState, action) {
 		}
 		// Previous suggestion is being selected:
 		case SELECT_PREVIOUS_SUGGESTION: {
-			const index = restrictSelectedSuggestionIndex(state, state.selectedSuggestionIndex - 1);
+			const maxIndex = state.suggestedEmoji(state).length - 1; // memoized
+			if (maxIndex === -1) { // skip when there are no suggestions
+				return state;
+			}
+			const index = clamp(state.selectedSuggestionIndex - 1, 0, maxIndex);
 			return {
 				...state,
 				selectedSuggestionIndex: index,
 			};
 		}
-		// Submit emoji based on inputted search term and selected suggestion:
+		// Selected emoji is being sumbitted:
 		case SUBMIT: {
-			if (state.searchTerm.length > 0) {
-				// Memoize visual representation of selected emoji:
-				const suggestions = state.suggestedEmoji(state); // memoized
-				const emoji = suggestions.length ? suggestions[state.selectedSuggestionIndex].output : null;
-				return { ...state, emoji };
+			const suggestions = state.suggestedEmoji(state); // memoized
+			if (suggestions.length === 0) {
+				return state;
 			}
-			return state;
+			// Memoize visual representation of selected emoji:
+			return {
+				...state,
+				emoji: suggestions[state.selectedSuggestionIndex].output,
+			};
 		}
 		default:
 			return state;
