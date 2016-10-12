@@ -48,9 +48,9 @@ describe('query-reducer', () => {
 		let expectedState = { searchTerm: [], selectedSuggestionIndex: 0 };
 		expect(stateAfter).to.deep.equal(expectedState);
 
-		stateBefore = { searchTerm: ['A'], selectedSuggestionIndex: 1 };
+		stateBefore = { searchTerm: ['A'], selectedSuggestionIndex: 1, emoji: 'AA' };
 		stateAfter = reducer(stateBefore, actions.removeCharacter());
-		expectedState = { searchTerm: [], selectedSuggestionIndex: 0 };
+		expectedState = { searchTerm: [], selectedSuggestionIndex: 0, emoji: null };
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
 

@@ -61,6 +61,7 @@ export default function reducer(state = initialState, action) {
 				...state,
 				searchTerm: state.searchTerm.slice(0, -1),
 				selectedSuggestionIndex: 0,
+				emoji: null, // reset a previously submitted emoji
 			};
 		// Next suggestion is being selected:
 		case SELECT_NEXT_SUGGESTION: {
