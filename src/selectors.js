@@ -6,6 +6,7 @@ import { selectSearchTerm as selectSearchTermForQuery } from './query-selectors'
 
 const selectQueries = state => state.input.queries;
 
+// Returns the most recent query:
 const selectCurrentQuery = createSelector(
 	selectQueries,
 	queries => queries[queries.length - 1]
@@ -45,7 +46,7 @@ const selectSuggestedEmoji = createSelector(
 		})
 );
 
-const selectStyledInput = createSelector(
+export const selectStyledInput = createSelector(
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectPlaceholder,
@@ -73,7 +74,3 @@ const selectStyledInput = createSelector(
 		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}\n${styledSuggestedEmoji}`;
 	}
 );
-
-module.exports = {
-	selectStyledInput,
-};
