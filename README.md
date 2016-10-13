@@ -6,3 +6,4 @@
 - offer language selection?
 - add history functionality with up/down arrow keys for single emoji input
 - add scrolling or pagination to list of suggestions?
+- split this module up into a library and a cli
