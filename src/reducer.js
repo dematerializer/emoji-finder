@@ -4,6 +4,7 @@ import copyPaste from 'copy-paste';
 import logUpdate from 'log-update';
 import chalk from 'chalk';
 
+import queryReducer from './query-reducer';
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
@@ -11,7 +12,14 @@ import {
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 } from './constants';
-import queryReducer from './query-reducer';
+
+// Returns the most recent query:
+const selectCurrentQuery = state => state.queries[state.queries.length - 1];
+
+// Export of internals used for testing:
+export const internals = {
+	selectCurrentQuery,
+};
 
 // Initial state of the input module:
 const initialState = {
@@ -23,37 +31,31 @@ const initialState = {
 	],
 };
 
-// Returns the most recent query:
-const selectCurrentQuery = state => state.queries[state.queries.length - 1];
-
 export default function reducer(state = initialState, action) {
 	switch (action.type) {
-		// A character is being typed:
+		// A character is being added:
 		case ADD_CHARACTER: {
 			// Let the current query handle the action
 			// and update it's state with the new result:
 			const currentQuery = selectCurrentQuery(state);
 			return {
-				...state,
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
 			};
 		}
-		// The last character is being removed:
+		// The last added character is being removed:
 		case REMOVE_CHARACTER: {
-			// Remove current query if there is no character to be deleted:
+			// Remove the current query if there is no character left to be removed:
 			const currentQuery = selectCurrentQuery(state);
 			if (currentQuery.searchTerm.length === 0 && state.queries.length > 1) {
 				return {
-					...state,
 					queries: state.queries.slice(0, -1),
 				};
 			}
 			// As long as there's a character in the current query's search term,
 			// let it handle the action and update it's state with the new result:
 			return {
-				...state,
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
@@ -65,7 +67,6 @@ export default function reducer(state = initialState, action) {
 			// and update it's state with the new result:
 			const currentQuery = selectCurrentQuery(state);
 			return {
-				...state,
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
@@ -77,13 +78,12 @@ export default function reducer(state = initialState, action) {
 			// and update it's state with the new result:
 			const currentQuery = selectCurrentQuery(state);
 			return {
-				...state,
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				),
 			};
 		}
-		// Submit selected single emoji or sequence:
+		// Selected single emoji or whole sequence is being submitted:
 		case SUBMIT: {
 			const currentQuery = selectCurrentQuery(state);
 			const searchTermLength = currentQuery.searchTerm.join('').length;
@@ -96,7 +96,6 @@ export default function reducer(state = initialState, action) {
 					((query === currentQuery) ? queryReducer(currentQuery, action) : query)
 				);
 				return {
-					...state,
 					queries: [...updatedQueries, queryReducer(undefined, { type: 'INIT' })],
 				};
 			// Submit the sequence of submitted emoji:
@@ -109,8 +108,9 @@ export default function reducer(state = initialState, action) {
 				logUpdate(chalk.yellow('💾 📋 ✓'));
 				logUpdate.done();
 				process.exit(0);
-				return initialState;
+				// return initialState;
 			}
+			// istanbul ignore next
 			return state;
 		}
 		default:
