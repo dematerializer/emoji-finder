@@ -13,7 +13,7 @@ import {
 	selectPreviousSuggestion,
 	submit,
 } from './actions';
-import { selectStyledInput } from './selectors';
+import selectStyledInput from './selectors';
 
 // Configure store:
 

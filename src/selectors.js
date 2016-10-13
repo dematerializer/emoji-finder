@@ -46,7 +46,7 @@ const selectSuggestedEmoji = createSelector(
 		})
 );
 
-export const selectStyledInput = createSelector(
+const selectStyledInput = createSelector(
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectPlaceholder,
@@ -74,3 +74,5 @@ export const selectStyledInput = createSelector(
 		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}\n${styledSuggestedEmoji}`;
 	}
 );
+
+export default selectStyledInput;
