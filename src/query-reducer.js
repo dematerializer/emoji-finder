@@ -20,6 +20,7 @@ const clamp = (index, min, max) => {
 	return movedIndex;
 };
 
+// Export of internals used for testing:
 export const internals = {
 	clamp,
 };
@@ -28,12 +29,13 @@ export const internals = {
 const initialState = {
 	// User typed-in array of characters:
 	searchTerm: [],
-	// Index of the user-selected emoji from the
-	// list of suggestions for the search term:
+	// Index of the user-selected emoji from the list
+	// of suggestions that match the search term:
 	selectedSuggestionIndex: 0,
 	// Resulting 'submitted' emoji:
 	emoji: null,
-	// Memoized selector for this query instance:
+	// Memoized selector for this query instance that selects
+	// a list of suggested emoji that match the search term:
 	suggestedEmoji: createSelectSuggestedEmojiForQuery(),
 };
 
@@ -61,15 +63,15 @@ export default function reducer(state = initialState, action) {
 				...state,
 				searchTerm: state.searchTerm.slice(0, -1),
 				selectedSuggestionIndex: 0,
-				emoji: null, // reset a previously submitted emoji
+				emoji: null, // also reset a previously submitted emoji
 			};
 		// Next suggestion is being selected:
 		case SELECT_NEXT_SUGGESTION: {
-			const maxIndex = state.suggestedEmoji(state).length - 1; // memoized
-			if (maxIndex === -1) { // skip when there are no suggestions
+			const numSuggestions = state.suggestedEmoji(state).length; // memoized
+			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
-			const index = clamp(state.selectedSuggestionIndex + 1, 0, maxIndex);
+			const index = clamp(state.selectedSuggestionIndex + 1, 0, numSuggestions - 1);
 			return {
 				...state,
 				selectedSuggestionIndex: index,
@@ -77,23 +79,23 @@ export default function reducer(state = initialState, action) {
 		}
 		// Previous suggestion is being selected:
 		case SELECT_PREVIOUS_SUGGESTION: {
-			const maxIndex = state.suggestedEmoji(state).length - 1; // memoized
-			if (maxIndex === -1) { // skip when there are no suggestions
+			const numSuggestions = state.suggestedEmoji(state).length; // memoized
+			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
-			const index = clamp(state.selectedSuggestionIndex - 1, 0, maxIndex);
+			const index = clamp(state.selectedSuggestionIndex - 1, 0, numSuggestions - 1);
 			return {
 				...state,
 				selectedSuggestionIndex: index,
 			};
 		}
-		// Selected emoji is being sumbitted:
+		// Selected emoji is being submitted:
 		case SUBMIT: {
 			const suggestions = state.suggestedEmoji(state); // memoized
 			if (suggestions.length === 0) {
 				return state;
 			}
-			// Memoize visual representation of selected emoji:
+			// Memorize ('submit') visual representation of selected emoji:
 			return {
 				...state,
 				emoji: suggestions[state.selectedSuggestionIndex].output,

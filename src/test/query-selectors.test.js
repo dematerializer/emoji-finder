@@ -1,5 +1,6 @@
 import mock from 'mock-require';
 
+// mock search.js required by query-selectors.js:
 mock('../search', () => ['🦄']);
 const {
 	selectSearchTerm,
@@ -14,7 +15,7 @@ describe('query-selectors', () => {
 		expect(selectSearchTerm(state)).to.deep.equal('unicorn');
 	});
 
-	it('should select a list of selected emoji based on the current query', () => {
+	it('should select a list of suggested emoji that match the search term', () => {
 		expect(createSelectSuggestedEmojiForQuery().resultFunc('unicorn')).to.deep.equal(['🦄']);
 	});
 });
