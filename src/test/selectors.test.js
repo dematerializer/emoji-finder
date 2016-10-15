@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+
 import { internals } from '../selectors';
 import { createSelectSuggestedEmojiForQuery } from '../query-selectors';
 

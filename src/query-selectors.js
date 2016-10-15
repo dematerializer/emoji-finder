@@ -1,6 +1,7 @@
 // query selectors
 
 import { filter } from 'fuzzaldrin';
+
 import { MAX_RESULTS } from './constants';
 
 // NOTE: These selectors are meant to be used directly on query state objects:

@@ -2,6 +2,7 @@
 
 import { createSelector } from 'reselect';
 import chalk from 'chalk';
+
 import { selectSearchTermForQuery } from './query-selectors';
 
 const selectInput = state => state.input;
