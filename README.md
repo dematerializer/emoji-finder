@@ -1,7 +1,6 @@
 # emoji-quickfinder
 
 ## TODO
-- sort dependencies and devDependencies
 - test selectors
 - test search and try to fix that search does initialization upon require
 - use a saga to listen to a 'SUBMITTED' action in index.js, then do copyPaste.copy(), log success and process.exit() there

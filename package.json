@@ -17,30 +17,27 @@
     "instrument": false
   },
   "dependencies": {
-    "babel-eslint": "^6.1.2",
-    "babel-plugin-istanbul": "^2.0.1",
-    "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-register": "^6.14.0",
-    "chai": "^3.5.0",
     "chalk": "^1.1.3",
     "copy-paste": "^1.3.0",
-    "eslint": "^3.5.0",
-    "eslint-config-airbnb-base": "^7.1.0",
-    "eslint-plugin-import": "^1.14.0",
     "fuzzaldrin": "^2.1.0",
     "has-ansi": "^2.0.0",
     "log-update": "^1.0.2",
-    "mocha": "^3.0.2",
-    "nyc": "^8.3.0",
     "redux": "^3.5.2",
     "reselect": "^2.5.3",
     "unicode-emoji-data": "../unicode-emoji-data"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.13.2",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-register": "^6.11.6"
+    "babel-eslint": "^6.1.2",
+    "babel-plugin-istanbul": "^2.0.1",
+    "babel-polyfill": "^6.13.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.5.0",
+    "eslint-config-airbnb-base": "^7.1.0",
+    "eslint-plugin-import": "^1.14.0",
+    "mocha": "^3.0.2",
+    "nyc": "^8.3.0"
   }
 }
