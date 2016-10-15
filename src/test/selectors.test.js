@@ -3,6 +3,7 @@ import { internals } from '../selectors';
 import { createSelectSuggestedEmojiForQuery } from '../query-selectors';
 
 const {
+	selectInput,
 	selectData,
 	selectQueries,
 	selectCurrentQuery,
@@ -13,6 +14,13 @@ const {
 } = internals;
 
 describe('selectors', () => {
+	it('should select the input domain', () => {
+		const state = {
+			input: {},
+		};
+		expect(selectInput(state)).to.equal(state.input);
+	});
+
 	it('should select data', () => {
 		const state = {
 			input: {

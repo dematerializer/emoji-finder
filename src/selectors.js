@@ -4,6 +4,7 @@ import { createSelector } from 'reselect';
 import chalk from 'chalk';
 import { selectSearchTermForQuery } from './query-selectors';
 
+const selectInput = state => state.input;
 const selectData = state => state.input.data;
 const selectQueries = state => state.input.queries;
 
@@ -43,17 +44,6 @@ const selectSuggestedEmoji = createSelector(
 		})
 );
 
-// Export of internals used for testing:
-export const internals = {
-	selectData,
-	selectQueries,
-	selectCurrentQuery,
-	selectCurrentQuerySearchTerm,
-	selectCurrentQuerySelectedSuggestionIndex,
-	selectSubmittedEmoji,
-	selectSuggestedEmoji,
-};
-
 // istanbul ignore next
 const selectStyledInput = createSelector(
 	selectData,
@@ -86,5 +76,22 @@ const selectStyledInput = createSelector(
 		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}\n${styledSuggestedEmoji}`;
 	}
 );
+
+// Export of internals used for testing:
+export const internals = {
+	selectInput,
+	selectData,
+	selectQueries,
+	selectCurrentQuery,
+	selectCurrentQuerySearchTerm,
+	selectCurrentQuerySelectedSuggestionIndex,
+	selectSubmittedEmoji,
+	selectSuggestedEmoji,
+};
+
+export {
+	selectInput,
+	selectQueries,
+};
 
 export default selectStyledInput;

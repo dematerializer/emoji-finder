@@ -1,11 +1,16 @@
 // index
 
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware, { takeEvery } from 'redux-saga';
+import { select } from 'redux-saga/effects';
+import copyPaste from 'copy-paste';
 import logUpdate from 'log-update';
+import chalk from 'chalk';
 import readline from 'readline';
 import hasAnsi from 'has-ansi';
 
 import inputReducer from './reducer';
+import { SUBMIT } from './constants';
 import {
 	setData,
 	addCharacter,
@@ -15,19 +20,48 @@ import {
 	submit,
 } from './actions';
 import data from './data';
-import selectStyledInput from './selectors';
+import selectStyledInput, {
+	selectInput,
+	selectQueries,
+} from './selectors';
 
-// Configure store:
+// Configure store with reducer and saga middleware:
 
 const rootReducer = combineReducers({
 	input: inputReducer,
 });
 
-const store = createStore(rootReducer);
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 
 // Set emoji data:
 
 store.dispatch(setData(data));
+
+// Listen for SUBMIT actions.
+// If the input emoji sequence needs to be submitted,
+// copy the sequence of emoji to the clipboard, print
+// out a final message and exit the application:
+
+function* copyEmojiSequenceAndExit() {
+	const input = yield select(selectInput);
+	if (!input.submitted) {
+		return;
+	}
+	const queries = yield select(selectQueries);
+	const emojiSequence = queries.filter(query => query.emoji != null).map(query => query.emoji).join('');
+	copyPaste.copy(emojiSequence);
+	logUpdate(chalk.yellow('💾 📋 ✓'));
+	logUpdate.done();
+	process.exit(0);
+}
+
+function* submittedSaga() {
+	yield takeEvery(SUBMIT, copyEmojiSequenceAndExit);
+}
+
+sagaMiddleware.run(submittedSaga);
 
 // Render once initially and every time the store changes:
 

@@ -1,9 +1,5 @@
 // input reducer
 
-import copyPaste from 'copy-paste';
-import logUpdate from 'log-update';
-import chalk from 'chalk';
-
 import queryReducer from './query-reducer';
 import {
 	SET_DATA,
@@ -32,6 +28,8 @@ const initialState = {
 		// First empty query to start with:
 		queryReducer(undefined, { type: 'INIT' }),
 	],
+	// Sequence is submitted:
+	submitted: false,
 };
 
 export default function reducer(state = initialState, action) {
@@ -120,18 +118,11 @@ export default function reducer(state = initialState, action) {
 					queries: [...updatedQueries, queryReducer(undefined, { type: 'INIT' })],
 				};
 			// Submit the sequence of submitted emoji:
-			// If at least one query contains a sumbitted emoji,
-			// copy the sequence of emoji to the clipboard, print
-			// out a final message and exit the application:
 			} else if (state.queries.some(q => q.emoji != null)) {
-				const result = state.queries.filter(q => q.emoji != null).map(q => q.emoji).join('');
-				copyPaste.copy(result);
-				logUpdate(chalk.yellow('💾 📋 ✓'));
-				logUpdate.done();
-				// process.exit(0);
 				return {
-					...initialState,
+					...state,
 					data: state.data,
+					submitted: true,
 				};
 			}
 			// istanbul ignore next

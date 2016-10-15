@@ -24,12 +24,13 @@ describe('reducer', () => {
 
 	it('should return the initial state', () => {
 		const initialState = reducer(undefined, {});
-		expect(initialState).to.have.all.keys('data', 'queries');
+		expect(initialState).to.have.all.keys('data', 'queries', 'submitted');
 		expect(initialState.data).to.equal(null);
 		expect(initialState.queries)
 			.to.be.an('array')
 				.with.deep.property('[0]')
 					.that.has.all.keys('searchTerm', 'selectedSuggestionIndex', 'emoji', 'suggestedEmoji');
+		expect(initialState.submitted).to.equal(false);
 	});
 
 	it('should be inoperable if data is not set', () => {
@@ -206,8 +207,9 @@ describe('reducer', () => {
 					emoji: null,
 				},
 			],
+			submitted: false,
 		};
 		const stateAfter = reducer(stateBefore, actions.submit());
-		expect(stateAfter.queries.length).to.equal(1);
+		expect(stateAfter.submitted).to.equal(true);
 	});
 });
