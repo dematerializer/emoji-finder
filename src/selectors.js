@@ -30,11 +30,6 @@ const selectSubmittedEmoji = createSelector(
 		.filter((query, index) => index < queries.length - 1) // last query is never submitted
 );
 
-const selectPlaceholder = createSelector(
-	selectSubmittedEmoji,
-	submittedEmoji => (submittedEmoji.length > 0 ? '⌫ , ⏎' : '')
-);
-
 const selectSuggestedEmoji = createSelector(
 	selectData,
 	selectCurrentQuery,
@@ -48,20 +43,31 @@ const selectSuggestedEmoji = createSelector(
 		})
 );
 
+// Export of internals used for testing:
+export const internals = {
+	selectData,
+	selectQueries,
+	selectCurrentQuery,
+	selectCurrentQuerySearchTerm,
+	selectCurrentQuerySelectedSuggestionIndex,
+	selectSubmittedEmoji,
+	selectSuggestedEmoji,
+};
+
+// istanbul ignore next
 const selectStyledInput = createSelector(
 	selectData,
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
-	selectPlaceholder,
 	selectSuggestedEmoji,
-	(data, submittedEmoji, currentQuerySearchTerm, placeholder, suggestedEmoji) => {
+	(data, submittedEmoji, currentQuerySearchTerm, suggestedEmoji) => {
 		if (data == null) {
 			return chalk.bold.red('no data');
 		}
 		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
-		const styledPlaceholder = chalk.dim(placeholder);
+		const styledPlaceholder = chalk.dim(submittedEmoji.length > 0 ? '⌫ , ⏎' : '');
 		const styledText = styledCurrentQuerySearchTerm.length > 0 ? styledCurrentQuerySearchTerm : styledPlaceholder;
 		let styledCursor = chalk.bold.yellow('█');
 		if (styledCurrentQuerySearchTerm.length > 0) {

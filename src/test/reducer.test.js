@@ -208,7 +208,6 @@ describe('reducer', () => {
 			],
 		};
 		const stateAfter = reducer(stateBefore, actions.submit());
-		expect(stateAfter.queries[1].emoji).to.equal('🦄');
-		expect(stateAfter.queries.length).to.equal(3);
+		expect(stateAfter.queries.length).to.equal(1);
 	});
 });

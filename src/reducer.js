@@ -128,8 +128,11 @@ export default function reducer(state = initialState, action) {
 				copyPaste.copy(result);
 				logUpdate(chalk.yellow('💾 📋 ✓'));
 				logUpdate.done();
-				process.exit(0);
-				return initialState;
+				// process.exit(0);
+				return {
+					...initialState,
+					data: state.data,
+				};
 			}
 			// istanbul ignore next
 			return state;
