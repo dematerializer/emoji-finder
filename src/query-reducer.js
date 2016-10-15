@@ -39,7 +39,14 @@ const initialState = {
 	suggestedEmoji: createSelectSuggestedEmojiForQuery(),
 };
 
-export default function reducer(state = initialState, action) {
+// NOTE: For some actions this needs data from the input reducer
+// to pass it on to the suggestedEmoji selector.
+
+export default function reducer(state = initialState, action, data) {
+	// Inoperable without data:
+	if (data == null) {
+		return state;
+	}
 	switch (action.type) {
 		// A character is being added:
 		case ADD_CHARACTER:
@@ -67,7 +74,7 @@ export default function reducer(state = initialState, action) {
 			};
 		// Next suggestion is being selected:
 		case SELECT_NEXT_SUGGESTION: {
-			const numSuggestions = state.suggestedEmoji(state).length; // memoized
+			const numSuggestions = state.suggestedEmoji(state, data).length; // memoized
 			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
@@ -79,7 +86,7 @@ export default function reducer(state = initialState, action) {
 		}
 		// Previous suggestion is being selected:
 		case SELECT_PREVIOUS_SUGGESTION: {
-			const numSuggestions = state.suggestedEmoji(state).length; // memoized
+			const numSuggestions = state.suggestedEmoji(state, data).length; // memoized
 			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
@@ -91,7 +98,7 @@ export default function reducer(state = initialState, action) {
 		}
 		// Selected emoji is being submitted:
 		case SUBMIT: {
-			const suggestions = state.suggestedEmoji(state); // memoized
+			const suggestions = state.suggestedEmoji(state, data); // memoized
 			if (suggestions.length === 0) {
 				return state;
 			}

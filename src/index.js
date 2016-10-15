@@ -7,12 +7,14 @@ import hasAnsi from 'has-ansi';
 
 import inputReducer from './reducer';
 import {
+	setData,
 	addCharacter,
 	removeCharacter,
 	selectNextSuggestion,
 	selectPreviousSuggestion,
 	submit,
 } from './actions';
+import data from './data';
 import selectStyledInput from './selectors';
 
 // Configure store:
@@ -23,13 +25,17 @@ const rootReducer = combineReducers({
 
 const store = createStore(rootReducer);
 
+// Set emoji data:
+
+store.dispatch(setData(data));
+
 // Render once initially and every time the store changes:
 
 const render = () => logUpdate(selectStyledInput(store.getState()));
 // const render = () => {
 // 	const state = store.getState();
 // 	// selectStyledInput(state);
-// 	console.dir(state.input.queries.map(q => q.emoji));
+// 	console.dir(state.input.queries);
 // };
 store.subscribe(render);
 render();

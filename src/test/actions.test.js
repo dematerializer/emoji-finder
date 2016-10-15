@@ -2,6 +2,11 @@ import * as actions from '../actions';
 import * as types from '../constants';
 
 describe('actions', () => {
+	it('should create an action to set data', () => {
+		const data = [1, 2, 3];
+		const expectedAction = { type: types.SET_DATA, data };
+		expect(actions.setData(data)).to.deep.equal(expectedAction);
+	});
 	it('should create an action to add a character', () => {
 		const character = 'a';
 		const expectedAction = { type: types.ADD_CHARACTER, character };

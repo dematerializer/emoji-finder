@@ -1,12 +1,18 @@
 // input actions
 
 import {
+	SET_DATA,
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 } from './constants';
+
+export const setData = data => ({
+	type: SET_DATA,
+	data,
+});
 
 export const addCharacter = character => ({
 	type: ADD_CHARACTER,

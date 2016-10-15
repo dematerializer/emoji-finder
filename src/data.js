@@ -1,6 +1,5 @@
-// search
+// data
 
-import { filter } from 'fuzzaldrin';
 import emoji from 'unicode-emoji-data/lib/emoji.expanded.json';
 import cldrAnnotations from 'unicode-emoji-data/lib/annotations/cldr/de.json';
 import communityAnnotations from 'unicode-emoji-data/lib/annotations/community/de.json';
@@ -46,9 +45,4 @@ const annotatedEmoji = emoji.map((datum) => {
 	};
 }).filter(datum => datum.search != null);
 
-export default function findEmoji(query) {
-	if (query.trim().length === 0) {
-		return [];
-	}
-	return filter(annotatedEmoji, query, { key: 'search' });
-}
+export default annotatedEmoji;

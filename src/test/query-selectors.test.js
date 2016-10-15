@@ -1,21 +1,28 @@
-import mock from 'mock-require';
-
-// mock search.js required by query-selectors.js:
-mock('../search', () => ['🦄']);
-const {
-	selectSearchTerm,
+import {
+	selectSearchTermForQuery,
 	createSelectSuggestedEmojiForQuery,
-} = mock.reRequire('../query-selectors');
+} from '../query-selectors';
 
 describe('query-selectors', () => {
 	it('should select the string representation of the search term array', () => {
 		let state = { searchTerm: [] };
-		expect(selectSearchTerm(state)).to.deep.equal('');
+		expect(selectSearchTermForQuery(state)).to.deep.equal('');
 		state = { searchTerm: ['u', 'n', 'i', 'c', 'o', 'r', 'n'] };
-		expect(selectSearchTerm(state)).to.deep.equal('unicorn');
+		expect(selectSearchTermForQuery(state)).to.deep.equal('unicorn');
 	});
 
 	it('should select a list of suggested emoji that match the search term', () => {
-		expect(createSelectSuggestedEmojiForQuery().resultFunc('unicorn')).to.deep.equal(['🦄']);
+		const data = [
+			{
+				search: 'unicorn',
+				output: '🦄',
+			},
+		];
+		const selectSuggestedEmojiForQuery = createSelectSuggestedEmojiForQuery(); // create memoized selector
+		let state = { searchTerm: [] };
+		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal([]);
+		state = { searchTerm: ['u', 'n', 'i', 'c', 'o', 'r', 'n'] };
+		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal(data);
+		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal(data); // memoized result
 	});
 });

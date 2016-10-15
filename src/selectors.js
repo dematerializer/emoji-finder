@@ -2,8 +2,9 @@
 
 import { createSelector } from 'reselect';
 import chalk from 'chalk';
-import { selectSearchTerm as selectSearchTermForQuery } from './query-selectors';
+import { selectSearchTermForQuery } from './query-selectors';
 
+const selectData = state => state.input.data;
 const selectQueries = state => state.input.queries;
 
 // Returns the most recent query:
@@ -35,10 +36,11 @@ const selectPlaceholder = createSelector(
 );
 
 const selectSuggestedEmoji = createSelector(
+	selectData,
 	selectCurrentQuery,
 	selectCurrentQuerySelectedSuggestionIndex,
-	(currentQuery, selectedSuggestionIndex) =>
-		currentQuery.suggestedEmoji(currentQuery) // need to pass in the query state explicitly
+	(data, currentQuery, selectedSuggestionIndex) =>
+		currentQuery.suggestedEmoji(currentQuery, data) // need to pass in the query state and data explicitly
 		.map((result, index) => {
 			const unselectedEmoji = `${result.output} `;
 			const selectedEmoji = chalk.underline.yellow(unselectedEmoji);
@@ -47,11 +49,15 @@ const selectSuggestedEmoji = createSelector(
 );
 
 const selectStyledInput = createSelector(
+	selectData,
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectPlaceholder,
 	selectSuggestedEmoji,
-	(submittedEmoji, currentQuerySearchTerm, placeholder, suggestedEmoji) => {
+	(data, submittedEmoji, currentQuerySearchTerm, placeholder, suggestedEmoji) => {
+		if (data == null) {
+			return chalk.bold.red('no data');
+		}
 		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
