@@ -47,14 +47,10 @@ const selectSuggestedEmoji = createSelector(
 
 // istanbul ignore next
 const selectStyledInput = createSelector(
-	selectData,
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectSuggestedEmoji,
-	(data, submittedEmoji, currentQuerySearchTerm, suggestedEmoji) => {
-		if (data == null) {
-			return chalk.bold.red('no data');
-		}
+	(submittedEmoji, currentQuerySearchTerm, suggestedEmoji) => {
 		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
