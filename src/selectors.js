@@ -45,7 +45,6 @@ const selectSuggestedEmoji = createSelector(
 		})
 );
 
-// istanbul ignore next
 const selectStyledInput = createSelector(
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,

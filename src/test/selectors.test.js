@@ -1,7 +1,17 @@
-import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
+import { combineReducers, createStore } from 'redux';
 
-import { internals } from '../selectors';
+import selectStyledInput, { internals } from '../selectors';
 import { createSelectSuggestedEmojiForQuery } from '../query-selectors';
+
+import inputReducer from '../reducer';
+import {
+	setData,
+	addCharacter,
+	removeCharacter,
+	selectNextSuggestion,
+	submit,
+} from '../actions';
 
 const {
 	selectInput,
@@ -76,7 +86,7 @@ describe('selectors', () => {
 			},
 			{
 				search: 'poo',
-				output: '🦄',
+				output: '🦄', // let's assume this is not a unicorn but a 'poony'
 			},
 		];
 		const currentQuery = {
@@ -88,10 +98,58 @@ describe('selectors', () => {
 			data,
 			currentQuery,
 			currentQuery.selectedSuggestionIndex
-		);
+		).map(emoji => stripAnsi(emoji));
 		expect(suggestedEmoji).to.deep.equal([
-			chalk.underline.yellow('🦄' + ' '), // eslint-disable-line no-useless-concat
+			'🦄' + ' ', // eslint-disable-line no-useless-concat
 			'💩' + ' ', // eslint-disable-line no-useless-concat
 		]);
+	});
+
+	it('should select styled input', () => {
+		const rootReducer = combineReducers({
+			input: inputReducer,
+		});
+		const store = createStore(rootReducer);
+		const mockData = [
+			{
+				search: 'poop',
+				output: '💩',
+			},
+			{
+				search: 'poo',
+				output: '🦄', // let's assume this is not a unicorn but a 'poony'
+			},
+		];
+		store.dispatch(setData(mockData));
+		const output = () => stripAnsi(selectStyledInput(store.getState()));
+
+		// Initial state:
+		expect(output()).to.equal('› █ \n');
+
+		// Start typing a matching search term:
+		store.dispatch(addCharacter('p'));
+		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 ');
+
+		// Select real poop:
+		store.dispatch(selectNextSuggestion());
+		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 '); // 💩 underlined, but not shown here because we stripped ansi
+
+		// Submit poop:
+		store.dispatch(submit());
+		expect(output()).to.equal('💩  › █ ⌫ , ⏎\n');
+
+		// Type search term with no match:
+		store.dispatch(addCharacter('n'));
+		store.dispatch(addCharacter('o'));
+		expect(output()).to.equal('💩  › no█ ⌫\n');
+
+		// Start over and type a search term that yields only one suggested emoji:
+		store.dispatch(removeCharacter());
+		store.dispatch(removeCharacter());
+		store.dispatch(addCharacter('p'));
+		store.dispatch(addCharacter('o'));
+		store.dispatch(addCharacter('o'));
+		store.dispatch(addCharacter('p'));
+		expect(output()).to.equal('💩  › poop█ ⌫ , ⏎\n💩 ');
 	});
 });
