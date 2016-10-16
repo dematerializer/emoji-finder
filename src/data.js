@@ -40,8 +40,8 @@ const annotatedEmoji = emoji.map((datum) => {
 		combinedAnnotation.tts = [datum.name];
 	}
 	return {
-		search: `${combinedAnnotation.tts.join(' ')} ${combinedAnnotation.keywords.join(' ')}`,
 		...datum,
+		search: `${combinedAnnotation.tts.join(' ')} ${combinedAnnotation.keywords.join(' ')}`,
 	};
 }).filter(datum => datum.search != null);
 
