@@ -43,6 +43,6 @@ const annotatedEmoji = emoji.map((datum) => {
 		...datum,
 		search: `${combinedAnnotation.tts.join(' ')} ${combinedAnnotation.keywords.join(' ')}`,
 	};
-}).filter(datum => datum.search != null);
+});
 
 export default annotatedEmoji;
