@@ -1,9 +1,10 @@
-// data
+import unicodeEmojiData from 'unicode-emoji-data';
+import unicodeEmojiAnnotations from 'unicode-emoji-annotations';
 
-import emoji from 'unicode-emoji-data/lib/emoji.expanded.json';
-import cldrAnnotations from 'unicode-emoji-data/lib/annotations/cldr/de.json';
-import communityAnnotations from 'unicode-emoji-data/lib/annotations/community/de.json';
-import universalCommunityAnnotations from 'unicode-emoji-data/lib/annotations/community/_universal.json';
+const emoji = unicodeEmojiData.expandedEmojiData['unicode-9-emoji-4'];
+const cldrAnnotations = unicodeEmojiAnnotations.annotations['unicode-9-cldr-30'].de;
+const communityAnnotations = unicodeEmojiAnnotations.annotations.community.de;
+const universalCommunityAnnotations = unicodeEmojiAnnotations.annotations.community.universal;
 
 // Convert arrays to objects with sequence as key:
 const annotationsForSequence = [

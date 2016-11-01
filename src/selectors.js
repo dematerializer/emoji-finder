@@ -1,5 +1,3 @@
-// input selectors
-
 import { createSelector } from 'reselect';
 import chalk from 'chalk';
 

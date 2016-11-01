@@ -1,5 +1,3 @@
-// input query reducer
-
 import { createSelectSuggestedEmojiForQuery } from './query-selectors';
 import {
 	ADD_CHARACTER,

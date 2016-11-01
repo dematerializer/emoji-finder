@@ -1,5 +1,3 @@
-// input actions
-
 import {
 	SET_DATA,
 	ADD_CHARACTER,

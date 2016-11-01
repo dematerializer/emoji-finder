@@ -1,5 +1,3 @@
-// input reducer
-
 import queryReducer from './query-reducer';
 import {
 	SET_DATA,

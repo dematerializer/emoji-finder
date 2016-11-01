@@ -1,5 +1,3 @@
-// query selectors
-
 import { filter } from 'fuzzaldrin';
 
 import { MAX_RESULTS } from './constants';

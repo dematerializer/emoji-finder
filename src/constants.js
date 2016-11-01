@@ -1,5 +1,3 @@
-// input constants
-
 export const SET_DATA = 'SET_DATA';
 export const ADD_CHARACTER = 'ADD_CHARACTER';
 export const REMOVE_CHARACTER = 'REMOVE_CHARACTER';

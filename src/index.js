@@ -1,5 +1,3 @@
-// index
-
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware, { takeEvery } from 'redux-saga';
 import { select } from 'redux-saga/effects';
