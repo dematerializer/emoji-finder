@@ -4,7 +4,7 @@ import unicodeEmojiAnnotations from 'unicode-emoji-annotations';
 const emoji = unicodeEmojiData.expandedEmojiData['unicode-9-emoji-4'];
 const cldrAnnotations = unicodeEmojiAnnotations.annotations['unicode-9-cldr-30'].de;
 const communityAnnotations = unicodeEmojiAnnotations.annotations.community.de;
-const universalCommunityAnnotations = unicodeEmojiAnnotations.annotations.community.universal;
+const universalCommunityAnnotations = unicodeEmojiAnnotations.annotations.community.global;
 
 // Convert arrays to objects with sequence as key:
 const annotationsForSequence = [

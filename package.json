@@ -6,7 +6,6 @@
   "author": "Andreas Tietz https://github.com/dematerializer",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm link unicode-emoji-data",
     "start": "node index.js",
     "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha --require ./test-env --compilers js:babel-core/register src/**/*.test.js",
     "posttest": "NODE_ENV=test npm run lint",
@@ -28,16 +27,17 @@
     "redux": "^3.5.2",
     "redux-saga": "^0.12.0",
     "reselect": "^2.5.3",
+    "unicode-emoji-annotations": "../unicode-emoji-annotations",
     "unicode-emoji-data": "../unicode-emoji-data"
   },
   "devDependencies": {
-    "babel-eslint": "^6.1.2",
+    "babel-eslint": "^7.1.0",
     "babel-plugin-istanbul": "^2.0.1",
     "babel-polyfill": "^6.13.0",
     "chai": "^3.5.0",
     "eslint": "^3.5.0",
-    "eslint-config-airbnb-base": "^7.1.0",
-    "eslint-plugin-import": "^1.14.0",
+    "eslint-config-airbnb-base": "^9.0.0",
+    "eslint-plugin-import": "^2.0.1",
     "mocha": "^3.0.2",
     "nyc": "^8.3.0",
     "strip-ansi": "^3.0.1"
