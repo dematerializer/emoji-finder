@@ -6,6 +6,7 @@
   "author": "Andreas Tietz https://github.com/dematerializer",
   "main": "index.js",
   "scripts": {
+    "update-unicode-emoji-deps": "rm -rf node_modules/unicode-emoji-*; npm i",
     "start": "node index.js",
     "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha --require ./test-env --compilers js:babel-core/register src/**/*.test.js",
     "posttest": "NODE_ENV=test npm run lint",

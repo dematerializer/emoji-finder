@@ -1,48 +1,33 @@
 import unicodeEmojiData from 'unicode-emoji-data';
 import unicodeEmojiAnnotations from 'unicode-emoji-annotations';
 
-const emoji = unicodeEmojiData.expandedEmojiData['unicode-9-emoji-4'];
-const cldrAnnotations = unicodeEmojiAnnotations.annotations['unicode-9-cldr-30'].de;
-const communityAnnotations = unicodeEmojiAnnotations.annotations.community.de;
-const universalCommunityAnnotations = unicodeEmojiAnnotations.annotations.community.global;
+const emoji = unicodeEmojiData.v4.expanded;
+const annotations = unicodeEmojiAnnotations.combined('v30', 'en');
 
-// Convert arrays to objects with sequence as key:
-const annotationsForSequence = [
-	cldrAnnotations,
-	communityAnnotations,
-	universalCommunityAnnotations,
-].map(annotations =>
-	annotations.reduce((annotationForSequence, annotation) => {
-		const extAnnotationForSequence = annotationForSequence;
-		extAnnotationForSequence[annotation.sequence] = annotation;
-		return extAnnotationForSequence;
-	}, {})
-);
+function groupArrayOfObjectsByKey(array, key) {
+	return array.reduce((curr, obj) => {
+		const next = curr;
+		next[typeof key === 'function' ? key(obj) : obj[key]] = obj;
+		return next;
+	}, {});
+}
+
+// Convert array to object with sequence as key:
+const annotationForSequence = groupArrayOfObjectsByKey(annotations, 'sequence');
 
 const matchAnyVariationSelectorOrModifier = /\s(FE0E|FE0F|1F3FB|1F3FC|1F3FD|1F3FE|1F3FF)/g;
 
+// Augment each emoji datum with a search string generated from it's annotation:
 const annotatedEmoji = emoji.map((datum) => {
 	const normalizedSequence = datum.sequence.replace(matchAnyVariationSelectorOrModifier, '');
-	const annotationsForNormalizedSequence = annotationsForSequence.map(annotationForSequence =>
-		annotationForSequence[normalizedSequence]
-	);
-	const combinedAnnotation = annotationsForNormalizedSequence.reduce((combined, current) => {
-		const extCombined = combined;
-		if (current != null) {
-			extCombined.tts = extCombined.tts.concat(current.tts || []);
-			extCombined.keywords = extCombined.keywords.concat(current.keywords || []);
-		}
-		return extCombined;
-	}, {
-		tts: [],
-		keywords: [],
-	});
-	if (combinedAnnotation.tts.length === 0) {
-		combinedAnnotation.tts = [datum.name];
+	const annotationForNormalizedSequence = annotationForSequence[normalizedSequence];
+	let search = datum.name; // fallback
+	if (annotationForNormalizedSequence) {
+		search = `${annotationForNormalizedSequence.tts} ${annotationForNormalizedSequence.keywords.join(' ')}`;
 	}
 	return {
 		...datum,
-		search: `${combinedAnnotation.tts.join(' ')} ${combinedAnnotation.keywords.join(' ')}`,
+		search,
 	};
 });
 
