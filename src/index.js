@@ -17,7 +17,7 @@ import {
 	selectPreviousSuggestion,
 	submit,
 } from './actions';
-import data from './data';
+import getDataForLanguage from './data';
 import selectStyledInput, {
 	selectInput,
 	selectQueries,
@@ -35,7 +35,20 @@ const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 
 // Set emoji data:
 
-store.dispatch(setData(data));
+const languageFromEnv = (process.env.LANG || 'en').split('.')[0].split('_')[0];
+const languageFromArgs = process.argv[2];
+let language = languageFromArgs || languageFromEnv;
+
+if (!['en', 'de'].includes(language)) {
+	logUpdate(`⌨ ${language} not upported, using en`);
+	logUpdate.done();
+	language = 'en';
+} else {
+	logUpdate(`⌨ ${language}`);
+	logUpdate.done();
+}
+
+store.dispatch(setData(getDataForLanguage(language)));
 
 // Listen for SUBMIT actions.
 // If the input emoji sequence needs to be submitted,
