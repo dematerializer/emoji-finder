@@ -1,8 +1,8 @@
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware, { takeEvery } from 'redux-saga';
 import { select } from 'redux-saga/effects';
-import copyPaste from 'copy-paste';
 import logUpdate from 'log-update';
+import copyPaste from 'copy-paste';
 import chalk from 'chalk';
 import readline from 'readline';
 import hasAnsi from 'has-ansi';
