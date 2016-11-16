@@ -39,4 +39,4 @@ export default function getDataForLanguage(language) {
 		};
 	});
 	return annotatedEmoji;
-};
+}
