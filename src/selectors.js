@@ -10,24 +10,24 @@ const selectQueries = state => state.input.queries;
 // Returns the most recent query:
 const selectCurrentQuery = createSelector(
 	selectQueries,
-	queries => queries[queries.length - 1]
+	queries => queries[queries.length - 1],
 );
 
 const selectCurrentQuerySearchTerm = createSelector(
 	selectCurrentQuery,
-	currentQuery => selectSearchTermForQuery(currentQuery)
+	currentQuery => selectSearchTermForQuery(currentQuery),
 );
 
 const selectCurrentQuerySelectedSuggestionIndex = createSelector(
 	selectCurrentQuery,
-	currentQuery => currentQuery.selectedSuggestionIndex
+	currentQuery => currentQuery.selectedSuggestionIndex,
 );
 
 const selectSubmittedEmoji = createSelector(
 	selectQueries,
 	queries => queries
 		.map(query => query.emoji)
-		.filter((query, index) => index < queries.length - 1) // last query is never submitted
+		.filter((query, index) => index < queries.length - 1), // last query is never submitted
 );
 
 const selectSuggestedEmoji = createSelector(
@@ -40,7 +40,7 @@ const selectSuggestedEmoji = createSelector(
 			const unselectedEmoji = `${result.output} `;
 			const selectedEmoji = chalk.underline.yellow(unselectedEmoji);
 			return (index === selectedSuggestionIndex) ? selectedEmoji : unselectedEmoji;
-		})
+		}),
 );
 
 const selectStyledInput = createSelector(
@@ -68,7 +68,7 @@ const selectStyledInput = createSelector(
 			return `${styledSubmittedEmoji}${styledPrompt} ${styledText}${styledCursor}\n${styledSuggestedEmoji}`;
 		}
 		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}\n${styledSuggestedEmoji}`;
-	}
+	},
 );
 
 // Export of internals used for testing:

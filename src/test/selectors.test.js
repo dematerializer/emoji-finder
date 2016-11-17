@@ -97,7 +97,7 @@ describe('selectors', () => {
 		const suggestedEmoji = selectSuggestedEmoji.resultFunc(
 			data,
 			currentQuery,
-			currentQuery.selectedSuggestionIndex
+			currentQuery.selectedSuggestionIndex,
 		).map(emoji => stripAnsi(emoji));
 		expect(suggestedEmoji).to.deep.equal([
 			'🦄' + ' ', // eslint-disable-line no-useless-concat

@@ -51,7 +51,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query)
+					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
 			};
 		}
@@ -70,7 +70,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query)
+					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
 			};
 		}
@@ -82,7 +82,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query)
+					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
 			};
 		}
@@ -94,7 +94,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query)
+					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
 			};
 		}
@@ -109,7 +109,7 @@ export default function reducer(state = initialState, action) {
 			// istanbul ignore else
 			if (searchTermLength > 0 && currentQuery.suggestedEmoji(currentQuery, state.data).length > 0) {
 				const updatedQueries = state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query)
+					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				);
 				return {
 					...state,
