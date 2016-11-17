@@ -4,16 +4,16 @@
   "private": true,
   "description": "emoji quickfinder",
   "author": "Andreas Tietz https://github.com/dematerializer",
-  "bin": "dist/cli.js",
-  "main": "dist/index.js",
+  "bin": "lib/cli.js",
+  "main": "lib/index.js",
   "scripts": {
     "update-local-deps": "rm -rf node_modules/unicode-emoji-*; npm i",
     "start": "node cli.js",
     "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha --require ./test-env --compilers js:babel-core/register src/**/*.test.js",
-    "posttest": "NODE_ENV=test npm run lint",
-    "lint": "NODE_ENV=test eslint --ignore-path .gitignore .",
+    "posttest": "npm run lint",
+    "lint": "eslint --ignore-path .gitignore .",
     "prepublish": "npm run test && npm run build",
-    "build": "rm -rf dist; mkdir dist; babel src -d dist --ignore **/*.test.js"
+    "build": "rm -rf lib; mkdir lib; babel src -d lib --ignore **/*.test.js"
   },
   "nyc": {
     "sourceMap": false,
