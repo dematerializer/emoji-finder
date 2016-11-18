@@ -72,11 +72,11 @@ function* copyEmojiSequenceAndExit() {
 	process.exit(0);
 }
 
-function* submittedSaga() {
+function* inputEmojiSequenceSubmitted() {
 	yield takeEvery(SUBMIT, copyEmojiSequenceAndExit);
 }
 
-sagaMiddleware.run(submittedSaga);
+sagaMiddleware.run(inputEmojiSequenceSubmitted);
 
 // Render once initially and every time the store changes:
 
