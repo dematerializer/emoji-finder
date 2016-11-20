@@ -28,4 +28,8 @@ describe('actions', () => {
 		const expectedAction = { type: types.SUBMIT };
 		expect(actions.submit()).to.deep.equal(expectedAction);
 	});
+	it('should create an action to reset the sequence of submitted emoji', () => {
+		const expectedAction = { type: types.RESET };
+		expect(actions.reset()).to.deep.equal(expectedAction);
+	});
 });

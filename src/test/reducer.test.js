@@ -212,4 +212,37 @@ describe('reducer', () => {
 		const stateAfter = reducer(stateBefore, actions.submit());
 		expect(stateAfter.submitted).to.equal(true);
 	});
+
+	it('should reset the sequence of submitted emoji (but not it\'s underlying data)', () => {
+		const stateBefore = {
+			data: mockedData,
+			queries: [
+				poop,
+				{
+					searchTerm: ['u', 'n', 'i', 'c'],
+					selectedSuggestionIndex: 1,
+					emoji: '🦄',
+					suggestedEmoji: () => [
+						{ output: 1 },
+						{ output: '🦄' },
+						{ output: 3 },
+					],
+				},
+				{
+					searchTerm: [],
+					selectedSuggestionIndex: 0,
+					emoji: null,
+				},
+			],
+			submitted: false,
+		};
+		const stateAfter = reducer(stateBefore, actions.reset());
+		expect(stateAfter).to.have.all.keys('data', 'queries', 'submitted');
+		expect(stateAfter.data).to.equal(stateBefore.data);
+		expect(stateAfter.queries)
+			.to.be.an('array')
+				.with.deep.property('[0]')
+					.that.has.all.keys('searchTerm', 'selectedSuggestionIndex', 'emoji', 'suggestedEmoji');
+		expect(stateAfter.submitted).to.equal(false);
+	});
 });

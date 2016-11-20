@@ -5,6 +5,7 @@ import {
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
+	RESET,
 } from './constants';
 
 export const setData = data => ({
@@ -31,4 +32,8 @@ export const selectPreviousSuggestion = () => ({
 
 export const submit = () => ({
 	type: SUBMIT,
+});
+
+export const reset = () => ({
+	type: RESET,
 });

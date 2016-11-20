@@ -6,6 +6,7 @@ import {
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
+	RESET,
 } from './constants';
 
 // Returns the most recent query:
@@ -125,6 +126,13 @@ export default function reducer(state = initialState, action) {
 			}
 			// istanbul ignore next
 			return state;
+		}
+		// Reset everything but data:
+		case RESET: {
+			return {
+				...initialState,
+				data: state.data,
+			};
 		}
 		default:
 			return state;
