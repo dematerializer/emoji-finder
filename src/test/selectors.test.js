@@ -1,7 +1,7 @@
 import stripAnsi from 'strip-ansi';
 import { combineReducers, createStore } from 'redux';
 
-import selectStyledInput, { internals } from '../selectors';
+import { internals } from '../selectors';
 import { createSelectSuggestedEmojiForQuery } from '../query-selectors';
 
 import inputReducer from '../reducer';
@@ -22,6 +22,7 @@ const {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectStyledInput,
 } = internals;
 
 describe('selectors', () => {

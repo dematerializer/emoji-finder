@@ -81,11 +81,11 @@ export const internals = {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectStyledInput,
 };
 
 export {
 	selectInput,
 	selectQueries,
+	selectStyledInput,
 };
-
-export default selectStyledInput;

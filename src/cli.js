@@ -22,9 +22,10 @@ import {
 	submit,
 } from './actions';
 import getDataForLanguage from './data';
-import selectStyledInput, {
+import {
 	selectInput,
 	selectQueries,
+	selectStyledInput,
 } from './selectors';
 
 // Configure store with reducer and saga middleware:
