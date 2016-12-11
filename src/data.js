@@ -1,7 +1,7 @@
-import unicodeEmojiData from 'unicode-emoji-data';
+import { expandEmojiData, emojiDataStable } from 'unicode-emoji-data';
 import unicodeEmojiAnnotations from 'unicode-emoji-annotations';
 
-const emojiData = unicodeEmojiData.expand(unicodeEmojiData.latest);
+const emojiData = expandEmojiData(emojiDataStable);
 
 function groupArrayOfObjectsByKey(array, key) {
 	return array.reduce((curr, obj) => {
