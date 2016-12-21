@@ -7,7 +7,7 @@
   "bin": "lib/cli.js",
   "main": "lib/index.js",
   "scripts": {
-    "update-local-deps": "rm -rf node_modules/unicode-emoji-*; npm i",
+    "update-local-deps": "rm -rf node_modules/unicode-emoji-annotations; npm i",
     "start": "node cli.js",
     "test": "NODE_ENV=test nyc --reporter=lcov --reporter=text mocha --require ./test-env --compilers js:babel-core/register src/**/*.test.js",
     "posttest": "npm run lint",
@@ -30,7 +30,7 @@
     "regenerator-runtime": "0.9.6",
     "reselect": "2.5.4",
     "unicode-emoji-annotations": "../unicode-emoji-annotations",
-    "unicode-emoji-data": "../unicode-emoji-data"
+    "unicode-emoji-data": "1.0.2"
   },
   "devDependencies": {
     "babel-cli": "6.18.0",
