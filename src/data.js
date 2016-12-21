@@ -1,5 +1,5 @@
 import { expandEmojiData, emojiDataStable } from 'unicode-emoji-data';
-import unicodeEmojiAnnotations from 'unicode-emoji-annotations';
+import { combinedAnnotationsForLanguage } from 'unicode-emoji-annotations';
 
 const emojiData = expandEmojiData(emojiDataStable);
 
@@ -12,8 +12,8 @@ function groupArrayOfObjectsByKey(array, key) {
 }
 
 export default function getDataForLanguage(language) {
-	const annotations = unicodeEmojiAnnotations.combined('latest', language);
-	const englishAnnotations = unicodeEmojiAnnotations.combined('latest', 'en');
+	const annotations = combinedAnnotationsForLanguage(language);
+	const englishAnnotations = combinedAnnotationsForLanguage('en');
 
 	// Convert array to object with sequence as key:
 	const annotationForSequence = groupArrayOfObjectsByKey(annotations, 'sequence');
