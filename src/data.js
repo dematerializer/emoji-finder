@@ -1,5 +1,6 @@
 import { expandEmojiData, emojiDataStable } from 'unicode-emoji-data';
 import { combinedAnnotationsForLanguage } from 'unicode-emoji-annotations';
+import punycode from 'punycode';
 
 const emojiData = expandEmojiData(emojiDataStable);
 
@@ -23,7 +24,9 @@ export default function getDataForLanguage(language) {
 
 	// Augment each emoji datum with a search string generated from it's annotation:
 	const annotatedEmoji = emojiData.map((datum) => {
-		const normalizedSequence = datum.sequence.replace(matchAnyVariationSelectorOrModifier, '');
+		// Prefer explicit emoji presentation variation sequence:
+		const outputSequence = datum.presentation.variation ? datum.presentation.variation.emoji : datum.presentation.default;
+		const normalizedSequence = outputSequence.replace(matchAnyVariationSelectorOrModifier, '');
 		const annotationForNormalizedSequence = annotationForSequence[normalizedSequence];
 		const englishAnnotationForNormalizedSequence = englishAnnotationForSequence[normalizedSequence];
 		let search = '';
@@ -36,6 +39,7 @@ export default function getDataForLanguage(language) {
 		}
 		return {
 			...datum,
+			output: punycode.ucs2.encode(outputSequence.split(' ').map(cp => parseInt(cp, 16))),
 			search,
 		};
 	});
