@@ -3,7 +3,27 @@
   "version": "0.0.0",
   "private": true,
   "description": "emoji quickfinder",
+  "keywords": [
+    "cli",
+    "emoji",
+    "quick",
+    "search",
+    "find",
+    "copy",
+    "clipboard",
+    "internationalized",
+    "i18n"
+  ],
   "author": "Andreas Tietz (https://github.com/dematerializer)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dematerializer/emoji-quickfinder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dematerializer/emoji-quickfinder/issues"
+  },
+  "homepage": "https://github.com/dematerializer/emoji-quickfinder",
   "bin": "lib/cli.js",
   "main": "lib/index.js",
   "scripts": {
