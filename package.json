@@ -2,7 +2,7 @@
   "name": "emoji-quickfinder",
   "version": "0.0.0",
   "private": true,
-  "description": "emoji quickfinder",
+  "description": "Quickly find and copy emoji to the clipboard via the CLI",
   "keywords": [
     "cli",
     "emoji",
