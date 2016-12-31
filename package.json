@@ -1,12 +1,11 @@
 {
-  "name": "emoji-quickfinder",
+  "name": "emoji-finder",
   "version": "0.0.0",
   "private": true,
   "description": "Quickly find and copy emoji to the clipboard via the CLI",
   "keywords": [
     "cli",
     "emoji",
-    "quick",
     "search",
     "find",
     "copy",
@@ -18,12 +17,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dematerializer/emoji-quickfinder.git"
+    "url": "https://github.com/dematerializer/emoji-finder.git"
   },
   "bugs": {
-    "url": "https://github.com/dematerializer/emoji-quickfinder/issues"
+    "url": "https://github.com/dematerializer/emoji-finder/issues"
   },
-  "homepage": "https://github.com/dematerializer/emoji-quickfinder",
+  "homepage": "https://github.com/dematerializer/emoji-finder",
   "bin": "lib/cli.js",
   "main": "lib/index.js",
   "scripts": {
