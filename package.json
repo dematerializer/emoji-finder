@@ -1,7 +1,6 @@
 {
   "name": "emoji-finder",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "description": "Quickly find and copy emoji to the clipboard via the command-line",
   "keywords": [
     "cli",
