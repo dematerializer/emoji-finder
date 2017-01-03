@@ -10,6 +10,19 @@
 
 Works best on Mac OS. Works great on Linux after installing [Emoji One](https://github.com/eosrei/emojione-color-font#install-on-linux). [Doesn't really work on Windows](https://github.com/sindresorhus/emoj/issues/5).
 
+## Usage
+
+```
+$ emoji-finder --help
+
+  Usage
+    $ emoji-finder [de|en]
+
+  Run without arguments to use the language set in
+  your environment ($LANG). Falls back to 'en' if
+  not available or not supported.
+```
+
 ## Install
 
 `npm install -g emoji-finder`

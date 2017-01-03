@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Main entry point for CLI
 
 import 'regenerator-runtime/runtime';
@@ -10,6 +12,7 @@ import copyPaste from 'copy-paste';
 import chalk from 'chalk';
 import readline from 'readline';
 import hasAnsi from 'has-ansi';
+import meow from 'meow';
 
 import inputReducer from './reducer';
 import { SUBMIT } from './constants';
@@ -28,6 +31,15 @@ import {
 	selectStyledInput,
 } from './selectors';
 
+const cli = meow(`
+    Usage
+      $ emoji-finder [de|en]
+
+    Run without arguments to use the language set in
+    your environment (echo $LANG). Falls back to 'en' if
+    not available or not supported.
+`);
+
 // Configure store with reducer and saga middleware:
 
 const rootReducer = combineReducers({
@@ -41,7 +53,7 @@ const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 // Set emoji data:
 
 const languageFromEnv = (process.env.LANG || 'en').split('.')[0].split('_')[0];
-const languageFromArgs = process.argv[2];
+const languageFromArgs = cli.input[0];
 let language = languageFromArgs || languageFromEnv;
 
 if (!['en', 'de'].includes(language)) {

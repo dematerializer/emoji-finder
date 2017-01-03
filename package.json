@@ -52,6 +52,7 @@
     "fuzzaldrin": "2.1.0",
     "has-ansi": "2.0.0",
     "log-update": "1.0.2",
+    "meow": "3.7.0",
     "punycode": "2.0.1",
     "redux": "3.6.0",
     "redux-saga": "0.13.0",
