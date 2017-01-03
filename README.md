@@ -19,7 +19,7 @@ $ emoji-finder --help
     $ emoji-finder [de|en]
 
   Run without arguments to use the language set in
-  your environment ($LANG). Falls back to 'en' if
+  your environment (echo $LANG). Falls back to 'en' if
   not available or not supported.
 ```
 
