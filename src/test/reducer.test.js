@@ -24,7 +24,7 @@ describe('reducer', () => {
 
 	it('should return the initial state', () => {
 		const initialState = reducer(undefined, {});
-		expect(initialState).to.have.all.keys('data', 'queries', 'submitted');
+		expect(initialState).to.have.all.keys('data', 'queries', 'submitted', 'history', 'positionInHistory');
 		expect(initialState.data).to.equal(null);
 		expect(initialState.queries)
 			.to.be.an('array')
@@ -40,6 +40,9 @@ describe('reducer', () => {
 		expect(reducer(stateBefore, actions.selectNextSuggestion())).to.deep.equal(stateBefore);
 		expect(reducer(stateBefore, actions.selectPreviousSuggestion())).to.deep.equal(stateBefore);
 		expect(reducer(stateBefore, actions.submit())).to.deep.equal(stateBefore);
+		expect(reducer(stateBefore, actions.reset())).to.deep.equal(stateBefore);
+		expect(reducer(stateBefore, actions.selectPreviousQuery())).to.deep.equal(stateBefore);
+		expect(reducer(stateBefore, actions.selectNextQuery())).to.deep.equal(stateBefore);
 	});
 
 	it('should return the same state if the action is not recognized', () => {
@@ -77,6 +80,7 @@ describe('reducer', () => {
 					emoji: null,
 				},
 			],
+			positionInHistory: -1,
 		};
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
@@ -99,6 +103,7 @@ describe('reducer', () => {
 			queries: [
 				poop,
 			],
+			positionInHistory: -1,
 		};
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
@@ -126,6 +131,7 @@ describe('reducer', () => {
 					emoji: null,
 				},
 			],
+			positionInHistory: -1,
 		};
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
@@ -180,10 +186,73 @@ describe('reducer', () => {
 					],
 				},
 			],
+			history: [],
+			positionInHistory: -1,
 		};
 		const stateAfter = reducer(stateBefore, actions.submit());
 		expect(stateAfter.queries[1].emoji).to.equal('🦄');
 		expect(stateAfter.queries.length).to.equal(3);
+	});
+
+	it('should build up and navigate through the history of submitted queries', () => {
+		const data = [
+			{
+				search: 'unicorn',
+				output: '🦄',
+			},
+			{
+				search: 'poop',
+				output: '💩',
+			},
+		];
+
+		// Init:
+		let state = reducer(undefined, {});
+		state = reducer(state, actions.setData(data));
+		expect(state.history.length).to.equal(0);
+		expect(state.positionInHistory).to.equal(-1);
+
+		// Try navigating empty history:
+		state = reducer(state, actions.selectPreviousQuery());
+		expect(state.positionInHistory).to.equal(-1);
+		state = reducer(state, actions.selectNextQuery());
+		expect(state.positionInHistory).to.equal(-1);
+
+		// Build up history:
+		'unicorn'.split('').forEach((character) => {
+			state = reducer(state, actions.addCharacter(character));
+		});
+		state = reducer(state, actions.submit());
+		expect(state.history.length).to.equal(1);
+		expect(state.positionInHistory).to.equal(-1);
+		'poop'.split('').forEach((character) => {
+			state = reducer(state, actions.addCharacter(character));
+		});
+		state = reducer(state, actions.submit());
+		expect(state.history.length).to.equal(2);
+		expect(state.positionInHistory).to.equal(-1);
+
+		// Don't add subsequent identical query to history:
+		'poop'.split('').forEach((character) => {
+			state = reducer(state, actions.addCharacter(character));
+		});
+		state = reducer(state, actions.submit());
+		expect(state.history.length).to.equal(2);
+		expect(state.positionInHistory).to.equal(-1);
+
+		// Navigate through history:
+		state = reducer(state, actions.selectNextQuery());
+		expect(state.positionInHistory).to.equal(-1);
+		state = reducer(state, actions.selectPreviousQuery());
+		expect(state.positionInHistory).to.equal(0);
+		state = reducer(state, actions.selectPreviousQuery());
+		expect(state.positionInHistory).to.equal(1);
+		state = reducer(state, actions.selectPreviousQuery());
+		expect(state.positionInHistory).to.equal(1);
+		state = reducer(state, actions.selectNextQuery());
+		expect(state.positionInHistory).to.equal(0);
+		state = reducer(state, actions.selectNextQuery());
+		expect(state.positionInHistory).to.equal(-1);
 	});
 
 	it('should submit the sequence of submitted emoji', () => {
@@ -237,7 +306,7 @@ describe('reducer', () => {
 			submitted: false,
 		};
 		const stateAfter = reducer(stateBefore, actions.reset());
-		expect(stateAfter).to.have.all.keys('data', 'queries', 'submitted');
+		expect(stateAfter).to.have.all.keys('data', 'queries', 'submitted', 'history', 'positionInHistory');
 		expect(stateAfter.data).to.equal(stateBefore.data);
 		expect(stateAfter.queries)
 			.to.be.an('array')

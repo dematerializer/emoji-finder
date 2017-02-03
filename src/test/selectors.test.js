@@ -11,6 +11,8 @@ import {
 	removeCharacter,
 	selectNextSuggestion,
 	submit,
+	selectPreviousQuery,
+	selectNextQuery,
 } from '../actions';
 
 const {
@@ -22,6 +24,10 @@ const {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectHistory,
+	selectPositionInHistory,
+	selectCanSelectPreviousQuery,
+	selectCanSelectNextQuery,
 	selectStyledInput,
 } = internals;
 
@@ -106,6 +112,60 @@ describe('selectors', () => {
 		]);
 	});
 
+	it('should select history', () => {
+		const state = {
+			input: {
+				history: [1, 2, 3],
+			},
+		};
+		expect(selectHistory(state)).to.equal(state.input.history);
+	});
+
+	it('should select position in history', () => {
+		const state = {
+			input: {
+				positionInHistory: 10,
+			},
+		};
+		expect(selectPositionInHistory(state)).to.equal(10);
+	});
+
+	it('should select whether a previous query can be selected from history', () => {
+		expect(selectCanSelectPreviousQuery({
+			input: { history: [], positionInHistory: -1 },
+		})).to.equal(false);
+		expect(selectCanSelectPreviousQuery({
+			input: { history: [1, 2, 3], positionInHistory: -1 },
+		})).to.equal(true);
+		expect(selectCanSelectPreviousQuery({
+			input: { history: [1, 2, 3], positionInHistory: 0 },
+		})).to.equal(true);
+		expect(selectCanSelectPreviousQuery({
+			input: { history: [1, 2, 3], positionInHistory: 1 },
+		})).to.equal(true);
+		expect(selectCanSelectPreviousQuery({
+			input: { history: [1, 2, 3], positionInHistory: 2 },
+		})).to.equal(false);
+	});
+
+	it('should select whether a next query can be selected from history', () => {
+		expect(selectCanSelectNextQuery({
+			input: { history: [], positionInHistory: -1 },
+		})).to.equal(false);
+		expect(selectCanSelectNextQuery({
+			input: { history: [1, 2, 3], positionInHistory: -1 },
+		})).to.equal(false);
+		expect(selectCanSelectNextQuery({
+			input: { history: [1, 2, 3], positionInHistory: 0 },
+		})).to.equal(true);
+		expect(selectCanSelectNextQuery({
+			input: { history: [1, 2, 3], positionInHistory: 1 },
+		})).to.equal(true);
+		expect(selectCanSelectNextQuery({
+			input: { history: [1, 2, 3], positionInHistory: 2 },
+		})).to.equal(true);
+	});
+
 	it('should select styled input', () => {
 		const rootReducer = combineReducers({
 			input: inputReducer,
@@ -119,6 +179,10 @@ describe('selectors', () => {
 			{
 				search: 'poo',
 				output: '🦄', // let's assume this is not a unicorn but a 'poony'
+			},
+			{
+				search: 'unicorn',
+				output: '🦄', // this is a real unicorn
 			},
 		];
 		store.dispatch(setData(mockData));
@@ -137,20 +201,38 @@ describe('selectors', () => {
 
 		// Submit poop:
 		store.dispatch(submit());
-		expect(output()).to.equal('💩  › █ ⌫ , ⏎\n');
+		expect(output()).to.equal('💩  › █ ⌫ , ⏎ , ↑\n');
 
-		// Type search term with no match:
-		store.dispatch(addCharacter('n'));
-		store.dispatch(addCharacter('o'));
-		expect(output()).to.equal('💩  › no█ ⌫\n');
+		// Type search term with no, absolutely no match:
+		'nono'.split('').forEach(character => store.dispatch(addCharacter(character)));
+		expect(output()).to.equal('💩  › nono█ ⌫ , ↑\n');
 
 		// Start over and type a search term that yields only one suggested emoji:
-		store.dispatch(removeCharacter());
-		store.dispatch(removeCharacter());
-		store.dispatch(addCharacter('p'));
-		store.dispatch(addCharacter('o'));
-		store.dispatch(addCharacter('o'));
-		store.dispatch(addCharacter('p'));
-		expect(output()).to.equal('💩  › poop█ ⌫ , ⏎\n💩 ');
+		'nono'.split('').forEach(() => store.dispatch(removeCharacter()));
+		'poop'.split('').forEach(character => store.dispatch(addCharacter(character)));
+		expect(output()).to.equal('💩  › poop█ ⌫ , ⏎ , ↑\n💩 ');
+
+		// Submit poop again:
+		store.dispatch(submit());
+		expect(output()).to.equal('💩  💩  › █ ⌫ , ⏎ , ↑\n');
+
+		// Submit unicorn:
+		'unicorn'.split('').forEach(character => store.dispatch(addCharacter(character)));
+		store.dispatch(submit());
+		expect(output()).to.equal('💩  💩  🦄  › █ ⌫ , ⏎ , ↑\n');
+
+		// Go back in history:
+		store.dispatch(selectPreviousQuery());
+		expect(output()).to.equal('💩  💩  🦄  › unicorn█ ⌫ , ⏎ , ↑↓\n🦄 ');
+
+		// Go back in history until the end:
+		store.dispatch(selectPreviousQuery());
+		store.dispatch(selectPreviousQuery());
+		expect(output()).to.equal('💩  💩  🦄  › p█ ⌫ , ⇄ ⏎ , ↓\n🦄   💩 ');
+
+		// Delete everything and go forward in history until present:
+		[...Array(100).keys()].forEach(() => store.dispatch(removeCharacter()));
+		[...Array(100).keys()].forEach(() => store.dispatch(selectNextQuery()));
+		expect(output()).to.equal('› █  ↑\n');
 	});
 });

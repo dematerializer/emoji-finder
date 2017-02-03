@@ -32,4 +32,12 @@ describe('actions', () => {
 		const expectedAction = { type: types.RESET };
 		expect(actions.reset()).to.deep.equal(expectedAction);
 	});
+	it('should create an action to go backward in the history of submitted queries', () => {
+		const expectedAction = { type: types.SELECT_PREVIOUS_QUERY };
+		expect(actions.selectPreviousQuery()).to.deep.equal(expectedAction);
+	});
+	it('should create an action to go forward in the history of submitted queries', () => {
+		const expectedAction = { type: types.SELECT_NEXT_QUERY };
+		expect(actions.selectNextQuery()).to.deep.equal(expectedAction);
+	});
 });

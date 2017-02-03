@@ -7,6 +7,8 @@ import {
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 	RESET,
+	SELECT_PREVIOUS_QUERY,
+	SELECT_NEXT_QUERY,
 } from './constants';
 
 // Returns the most recent query:
@@ -29,6 +31,10 @@ const initialState = {
 	],
 	// Sequence is submitted:
 	submitted: false,
+	// History of submitted queries:
+	history: [],
+	// Current position in the history:
+	positionInHistory: -1,
 };
 
 export default function reducer(state = initialState, action) {
@@ -54,6 +60,7 @@ export default function reducer(state = initialState, action) {
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
+				positionInHistory: -1,
 			};
 		}
 		// The last added character is being removed:
@@ -64,6 +71,7 @@ export default function reducer(state = initialState, action) {
 				return {
 					...state,
 					queries: state.queries.slice(0, -1),
+					positionInHistory: -1,
 				};
 			}
 			// As long as there's a character in the current query's search term,
@@ -73,6 +81,7 @@ export default function reducer(state = initialState, action) {
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
+				positionInHistory: -1,
 			};
 		}
 		// Next suggestion is being selected:
@@ -85,6 +94,7 @@ export default function reducer(state = initialState, action) {
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
+				positionInHistory: -1,
 			};
 		}
 		// Previous suggestion is being selected:
@@ -97,6 +107,7 @@ export default function reducer(state = initialState, action) {
 				queries: state.queries.map(query =>
 					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
 				),
+				positionInHistory: -1,
 			};
 		}
 		// Selected single emoji or whole sequence is being submitted:
@@ -109,12 +120,19 @@ export default function reducer(state = initialState, action) {
 			// state with the new result and initialize a new query:
 			// istanbul ignore else
 			if (searchTermLength > 0 && currentQuery.suggestedEmoji(currentQuery, state.data).length > 0) {
+				const submittedQuery = queryReducer(currentQuery, action, state.data);
 				const updatedQueries = state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
+					((query === currentQuery) ? submittedQuery : query),
 				);
+				const addToHistory = // don't add subsequent identical query
+					state.history.length === 0
+					|| currentQuery.searchTerm.join('') !== state.history[0].searchTerm.join('')
+					|| currentQuery.selectedSuggestionIndex !== state.history[0].selectedSuggestionIndex;
 				return {
 					...state,
 					queries: [...updatedQueries, queryReducer(undefined, { type: 'INIT' })],
+					history: addToHistory ? [currentQuery, ...state.history] : state.history,
+					positionInHistory: -1,
 				};
 			// Submit the sequence of submitted emoji:
 			} else if (state.queries.some(q => q.emoji != null)) {
@@ -132,6 +150,44 @@ export default function reducer(state = initialState, action) {
 			return {
 				...initialState,
 				data: state.data,
+			};
+		}
+		// Select previous query from history:
+		case SELECT_PREVIOUS_QUERY: {
+			const newIndexInHistory = Math.min(state.positionInHistory + 1, state.history.length - 1);
+			if (newIndexInHistory === state.positionInHistory) {
+				return state;
+			}
+			const currentQuery = selectCurrentQuery(state);
+			const updatedQueries = state.queries.map(query =>
+				((query === currentQuery) ? state.history[newIndexInHistory] : query),
+			);
+			return {
+				...state,
+				positionInHistory: newIndexInHistory,
+				queries: updatedQueries,
+			};
+		}
+		// Select next query from history:
+		case SELECT_NEXT_QUERY: {
+			const newIndexInHistory = Math.max(-1, state.positionInHistory - 1);
+			if (newIndexInHistory === state.positionInHistory) {
+				return state;
+			}
+			const currentQuery = selectCurrentQuery(state);
+			let newCurrentQuery = null;
+			if (newIndexInHistory > -1) {
+				newCurrentQuery = state.history[newIndexInHistory];
+			} else {
+				newCurrentQuery = queryReducer(undefined, { type: 'INIT' });
+			}
+			const updatedQueries = state.queries.map(query =>
+				((query === currentQuery) ? newCurrentQuery : query),
+			);
+			return {
+				...state,
+				positionInHistory: newIndexInHistory,
+				queries: updatedQueries,
 			};
 		}
 		default:

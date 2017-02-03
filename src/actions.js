@@ -6,6 +6,8 @@ import {
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
 	RESET,
+	SELECT_PREVIOUS_QUERY,
+	SELECT_NEXT_QUERY,
 } from './constants';
 
 export const setData = data => ({
@@ -36,4 +38,12 @@ export const submit = () => ({
 
 export const reset = () => ({
 	type: RESET,
+});
+
+export const selectPreviousQuery = () => ({
+	type: SELECT_PREVIOUS_QUERY,
+});
+
+export const selectNextQuery = () => ({
+	type: SELECT_NEXT_QUERY,
 });

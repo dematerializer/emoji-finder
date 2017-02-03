@@ -43,11 +43,29 @@ const selectSuggestedEmoji = createSelector(
 		}),
 );
 
+const selectHistory = state => state.input.history;
+const selectPositionInHistory = state => state.input.positionInHistory;
+
+const selectCanSelectPreviousQuery = createSelector(
+	selectHistory,
+	selectPositionInHistory,
+	(history, positionInHistory) => positionInHistory < history.length - 1,
+);
+
+const selectCanSelectNextQuery = createSelector(
+	selectHistory,
+	selectPositionInHistory,
+	(history, positionInHistory) => positionInHistory > -1,
+);
+
 const selectStyledInput = createSelector(
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectSuggestedEmoji,
-	(submittedEmoji, currentQuerySearchTerm, suggestedEmoji) => {
+	selectHistory,
+	selectCanSelectPreviousQuery,
+	selectCanSelectNextQuery,
+	(submittedEmoji, currentQuerySearchTerm, suggestedEmoji, history, canSelectPreviousQuery, canSelectNextQuery) => {
 		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
@@ -63,11 +81,22 @@ const selectStyledInput = createSelector(
 				styledCursor += chalk.dim(' ⌫ , ⏎');
 			}
 		}
+		let styledHistory = '';
+		if (history.length > 0) {
+			// istanbul ignore else
+			if (canSelectPreviousQuery && canSelectNextQuery) {
+				styledHistory = chalk.dim(' , ↑↓');
+			} else if (canSelectPreviousQuery) {
+				styledHistory = chalk.dim(styledText.length > 0 ? ' , ↑' : ' ↑');
+			} else if (canSelectNextQuery) {
+				styledHistory = chalk.dim(' , ↓');
+			}
+		}
 		const styledSuggestedEmoji = suggestedEmoji.join('  ');
 		if (styledCurrentQuerySearchTerm.length > 0) {
-			return `${styledSubmittedEmoji}${styledPrompt} ${styledText}${styledCursor}\n${styledSuggestedEmoji}`;
+			return `${styledSubmittedEmoji}${styledPrompt} ${styledText}${styledCursor}${styledHistory}\n${styledSuggestedEmoji}`;
 		}
-		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}\n${styledSuggestedEmoji}`;
+		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}${styledHistory}\n${styledSuggestedEmoji}`;
 	},
 );
 
@@ -81,6 +110,10 @@ export const internals = {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectHistory,
+	selectPositionInHistory,
+	selectCanSelectPreviousQuery,
+	selectCanSelectNextQuery,
 	selectStyledInput,
 };
 

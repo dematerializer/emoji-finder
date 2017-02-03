@@ -23,6 +23,8 @@ import {
 	selectNextSuggestion,
 	selectPreviousSuggestion,
 	submit,
+	selectPreviousQuery,
+	selectNextQuery,
 } from './actions';
 import getDataForLanguage from './data';
 import {
@@ -112,6 +114,10 @@ process.stdin.on('keypress', (character, key) => {
 		store.dispatch(selectPreviousSuggestion());
 	} else if (key.name === 'right' || key.name === 'tab') {
 		store.dispatch(selectNextSuggestion());
+	} else if (key.name === 'up') {
+		store.dispatch(selectPreviousQuery());
+	} else if (key.name === 'down') {
+		store.dispatch(selectNextQuery());
 	}
 
 	// Don't process ANSI input and tabs any further:
