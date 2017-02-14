@@ -145,11 +145,13 @@ export default function reducer(state = initialState, action) {
 			// istanbul ignore next
 			return state;
 		}
-		// Reset everything but data:
+		// Reset everything but data and history:
 		case RESET: {
 			return {
 				...initialState,
 				data: state.data,
+				history: state.history,
+				positionInHistory: state.positionInHistory,
 			};
 		}
 		// Select previous query from history:
