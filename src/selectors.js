@@ -105,7 +105,7 @@ const selectStyledInput = createSelector(
 			if (canSelectPreviousQuery && canSelectNextQuery) {
 				styledHistory = chalk.dim(' , ↑↓');
 			} else if (canSelectPreviousQuery) {
-				styledHistory = chalk.dim(styledText.length > 0 ? ' , ↑' : ' ↑');
+				styledHistory = chalk.dim(styledText.length > 0 ? ' , ↑' : '↑');
 			} else if (canSelectNextQuery) {
 				styledHistory = chalk.dim(' , ↓');
 			}

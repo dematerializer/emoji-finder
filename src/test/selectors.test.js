@@ -256,6 +256,6 @@ describe('selectors', () => {
 		// Delete everything and go forward in history until present:
 		[...Array(100).keys()].forEach(() => store.dispatch(removeCharacter()));
 		[...Array(100).keys()].forEach(() => store.dispatch(selectNextQuery()));
-		expect(output()).to.equal('› █  ↑\n\n');
+		expect(output()).to.equal('› █ ↑\n\n');
 	});
 });
