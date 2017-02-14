@@ -39,6 +39,7 @@ export default function getDataForLanguage(language) {
 		}
 		return {
 			...datum,
+			...annotationForNormalizedSequence,
 			output: punycode.ucs2.encode(outputSequence.split(' ').map(cp => parseInt(cp, 16))),
 			search,
 		};

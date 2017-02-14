@@ -43,6 +43,22 @@ const selectSuggestedEmoji = createSelector(
 		}),
 );
 
+const selectSelectedSuggestedEmojiDescription = createSelector(
+	selectData,
+	selectCurrentQuery,
+	selectCurrentQuerySelectedSuggestionIndex,
+	(data, currentQuery, selectedSuggestionIndex) => {
+		const suggestedEmoji = currentQuery.suggestedEmoji(currentQuery, data); // need to pass in the query state and data explicitly
+		const selectedSuggestedEmoji = suggestedEmoji[selectedSuggestionIndex];
+		if (selectedSuggestedEmoji == null) {
+			return '';
+		}
+		const tts = selectedSuggestedEmoji.tts || '';
+		const keywords = selectedSuggestedEmoji.keywords ? `[${selectedSuggestedEmoji.keywords.join(', ')}]` : '';
+		return `${tts} ${keywords}`;
+	},
+);
+
 const selectHistory = state => state.input.history;
 const selectPositionInHistory = state => state.input.positionInHistory;
 
@@ -62,10 +78,12 @@ const selectStyledInput = createSelector(
 	selectSubmittedEmoji,
 	selectCurrentQuerySearchTerm,
 	selectSuggestedEmoji,
+	selectSelectedSuggestedEmojiDescription,
 	selectHistory,
 	selectCanSelectPreviousQuery,
 	selectCanSelectNextQuery,
-	(submittedEmoji, currentQuerySearchTerm, suggestedEmoji, history, canSelectPreviousQuery, canSelectNextQuery) => {
+	(submittedEmoji, currentQuerySearchTerm, suggestedEmoji, selectedSuggestedEmojiDescription,
+	history, canSelectPreviousQuery, canSelectNextQuery) => {
 		const styledSubmittedEmoji = submittedEmoji.length > 0 ? (`${submittedEmoji.join('  ')}  `) : '';
 		const styledPrompt = chalk.bold.yellow('›');
 		const styledCurrentQuerySearchTerm = chalk.bold.yellow(currentQuerySearchTerm);
@@ -94,9 +112,9 @@ const selectStyledInput = createSelector(
 		}
 		const styledSuggestedEmoji = suggestedEmoji.join('  ');
 		if (styledCurrentQuerySearchTerm.length > 0) {
-			return `${styledSubmittedEmoji}${styledPrompt} ${styledText}${styledCursor}${styledHistory}\n${styledSuggestedEmoji}`;
+			return `${styledSubmittedEmoji}${styledPrompt} ${styledText}${styledCursor}${styledHistory}\n${styledSuggestedEmoji}\n${selectedSuggestedEmojiDescription}`;
 		}
-		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}${styledHistory}\n${styledSuggestedEmoji}`;
+		return `${styledSubmittedEmoji}${styledPrompt} ${styledCursor} ${styledText}${styledHistory}\n${styledSuggestedEmoji}\n${selectedSuggestedEmojiDescription}`;
 	},
 );
 
@@ -110,6 +128,7 @@ export const internals = {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectSelectedSuggestedEmojiDescription,
 	selectHistory,
 	selectPositionInHistory,
 	selectCanSelectPreviousQuery,

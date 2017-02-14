@@ -24,6 +24,7 @@ const {
 	selectCurrentQuerySelectedSuggestionIndex,
 	selectSubmittedEmoji,
 	selectSuggestedEmoji,
+	selectSelectedSuggestedEmojiDescription,
 	selectHistory,
 	selectPositionInHistory,
 	selectCanSelectPreviousQuery,
@@ -112,6 +113,28 @@ describe('selectors', () => {
 		]);
 	});
 
+	it('should select the description of the currently selected suggested emoji', () => {
+		const data = [
+			{
+				search: 'poop',
+				output: '💩',
+				tts: 'pile of poop',
+				keywords: ['poop, dung'],
+			},
+		];
+		const currentQuery = {
+			searchTerm: ['p', 'o', 'o'],
+			selectedSuggestionIndex: 0,
+			suggestedEmoji: createSelectSuggestedEmojiForQuery(),
+		};
+		const selectedSuggestedEmojiDescription = selectSelectedSuggestedEmojiDescription.resultFunc(
+			data,
+			currentQuery,
+			currentQuery.selectedSuggestionIndex,
+		);
+		expect(selectedSuggestedEmojiDescription).to.equal('pile of poop [poop, dung]');
+	});
+
 	it('should select history', () => {
 		const state = {
 			input: {
@@ -189,50 +212,50 @@ describe('selectors', () => {
 		const output = () => stripAnsi(selectStyledInput(store.getState()));
 
 		// Initial state:
-		expect(output()).to.equal('› █ \n');
+		expect(output()).to.equal('› █ \n\n');
 
 		// Start typing a matching search term:
 		store.dispatch(addCharacter('p'));
-		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 ');
+		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 \n ');
 
 		// Select real poop:
 		store.dispatch(selectNextSuggestion());
-		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 '); // 💩 underlined, but not shown here because we stripped ansi
+		expect(output()).to.equal('› p█ ⌫ , ⇄ ⏎\n🦄   💩 \n '); // 💩 underlined, but not shown here because we stripped ansi
 
 		// Submit poop:
 		store.dispatch(submit());
-		expect(output()).to.equal('💩  › █ ⌫ , ⏎ , ↑\n');
+		expect(output()).to.equal('💩  › █ ⌫ , ⏎ , ↑\n\n');
 
 		// Type search term with no, absolutely no match:
 		'nono'.split('').forEach(character => store.dispatch(addCharacter(character)));
-		expect(output()).to.equal('💩  › nono█ ⌫ , ↑\n');
+		expect(output()).to.equal('💩  › nono█ ⌫ , ↑\n\n');
 
 		// Start over and type a search term that yields only one suggested emoji:
 		'nono'.split('').forEach(() => store.dispatch(removeCharacter()));
 		'poop'.split('').forEach(character => store.dispatch(addCharacter(character)));
-		expect(output()).to.equal('💩  › poop█ ⌫ , ⏎ , ↑\n💩 ');
+		expect(output()).to.equal('💩  › poop█ ⌫ , ⏎ , ↑\n💩 \n ');
 
 		// Submit poop again:
 		store.dispatch(submit());
-		expect(output()).to.equal('💩  💩  › █ ⌫ , ⏎ , ↑\n');
+		expect(output()).to.equal('💩  💩  › █ ⌫ , ⏎ , ↑\n\n');
 
 		// Submit unicorn:
 		'unicorn'.split('').forEach(character => store.dispatch(addCharacter(character)));
 		store.dispatch(submit());
-		expect(output()).to.equal('💩  💩  🦄  › █ ⌫ , ⏎ , ↑\n');
+		expect(output()).to.equal('💩  💩  🦄  › █ ⌫ , ⏎ , ↑\n\n');
 
 		// Go back in history:
 		store.dispatch(selectPreviousQuery());
-		expect(output()).to.equal('💩  💩  🦄  › unicorn█ ⌫ , ⏎ , ↑↓\n🦄 ');
+		expect(output()).to.equal('💩  💩  🦄  › unicorn█ ⌫ , ⏎ , ↑↓\n🦄 \n ');
 
 		// Go back in history until the end:
 		store.dispatch(selectPreviousQuery());
 		store.dispatch(selectPreviousQuery());
-		expect(output()).to.equal('💩  💩  🦄  › p█ ⌫ , ⇄ ⏎ , ↓\n🦄   💩 ');
+		expect(output()).to.equal('💩  💩  🦄  › p█ ⌫ , ⇄ ⏎ , ↓\n🦄   💩 \n ');
 
 		// Delete everything and go forward in history until present:
 		[...Array(100).keys()].forEach(() => store.dispatch(removeCharacter()));
 		[...Array(100).keys()].forEach(() => store.dispatch(selectNextQuery()));
-		expect(output()).to.equal('› █  ↑\n');
+		expect(output()).to.equal('› █  ↑\n\n');
 	});
 });
