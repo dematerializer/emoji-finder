@@ -6,18 +6,17 @@ import { createSelectSuggestedEmojiForQuery } from '../query-selectors';
 
 import inputReducer from '../reducer';
 import {
-	setData,
 	addCharacter,
 	removeCharacter,
 	selectNextSuggestion,
 	submit,
+	setFindSuggestedEmoji,
 	selectPreviousQuery,
 	selectNextQuery,
 } from '../actions';
 
 const {
 	selectInput,
-	selectData,
 	selectQueries,
 	selectCurrentQuery,
 	selectCurrentQuerySearchTerm,
@@ -38,15 +37,6 @@ describe('selectors', () => {
 			input: {},
 		};
 		expect(selectInput(state)).to.equal(state.input);
-	});
-
-	it('should select data', () => {
-		const state = {
-			input: {
-				data: [1, 2, 3],
-			},
-		};
-		expect(selectData(state)).to.equal(state.input.data);
 	});
 
 	it('should select queries', () => {
@@ -87,48 +77,44 @@ describe('selectors', () => {
 	});
 
 	it('should select suggested emoji', () => {
-		const data = [
-			{
-				search: 'poop',
-				output: '💩',
-			},
-			{
-				search: 'poo',
-				output: '🦄', // let's assume this is not a unicorn but a 'poony'
-			},
-		];
 		const currentQuery = {
 			searchTerm: ['p', 'o', 'o'],
 			selectedSuggestionIndex: 0,
-			suggestedEmoji: createSelectSuggestedEmojiForQuery(),
+			findSuggestedEmoji: () => [
+				{
+					search: 'poop',
+					output: '💩',
+				},
+				{
+					search: 'poo',
+					output: '🦄', // let's assume this is not a unicorn but a 'poony'
+				},
+			],
 		};
 		const suggestedEmoji = selectSuggestedEmoji.resultFunc(
-			data,
 			currentQuery,
 			currentQuery.selectedSuggestionIndex,
 		).map(emoji => stripAnsi(emoji));
 		expect(suggestedEmoji).to.deep.equal([
-			'🦄' + ' ', // eslint-disable-line no-useless-concat
 			'💩' + ' ', // eslint-disable-line no-useless-concat
+			'🦄' + ' ', // eslint-disable-line no-useless-concat
 		]);
 	});
 
 	it('should select the description of the currently selected suggested emoji', () => {
-		const data = [
-			{
-				search: 'poop',
-				output: '💩',
-				tts: 'pile of poop',
-				keywords: ['poop, dung'],
-			},
-		];
 		const currentQuery = {
 			searchTerm: ['p', 'o', 'o'],
 			selectedSuggestionIndex: 0,
-			suggestedEmoji: createSelectSuggestedEmojiForQuery(),
+			findSuggestedEmoji: () => [
+				{
+					search: 'poop',
+					output: '💩',
+					tts: 'pile of poop',
+					keywords: ['poop, dung'],
+				},
+			],
 		};
 		const selectedSuggestedEmojiDescription = selectSelectedSuggestedEmojiDescription.resultFunc(
-			data,
 			currentQuery,
 			currentQuery.selectedSuggestionIndex,
 		);
@@ -194,7 +180,7 @@ describe('selectors', () => {
 			input: inputReducer,
 		});
 		const store = createStore(rootReducer);
-		const mockData = [
+		const data = [
 			{
 				search: 'poop',
 				output: '💩',
@@ -208,7 +194,7 @@ describe('selectors', () => {
 				output: '🦄', // this is a real unicorn
 			},
 		];
-		store.dispatch(setData(mockData));
+		store.dispatch(setFindSuggestedEmoji(createSelectSuggestedEmojiForQuery(data)));
 		const output = () => stripAnsi(selectStyledInput(store.getState()));
 
 		// Initial state:

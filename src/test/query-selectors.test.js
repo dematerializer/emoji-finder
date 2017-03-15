@@ -18,11 +18,11 @@ describe('query-selectors', () => {
 				output: '🦄',
 			},
 		];
-		const selectSuggestedEmojiForQuery = createSelectSuggestedEmojiForQuery(); // create memoized selector
+		const selectSuggestedEmojiForQuery = createSelectSuggestedEmojiForQuery(data); // create memoized selector
 		let state = { searchTerm: [] };
-		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal([]);
+		expect(selectSuggestedEmojiForQuery(state)).to.deep.equal([]);
 		state = { searchTerm: ['u', 'n', 'i', 'c', 'o', 'r', 'n'] };
-		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal(data);
-		expect(selectSuggestedEmojiForQuery(state, data)).to.deep.equal(data); // memoized result
+		expect(selectSuggestedEmojiForQuery(state)).to.deep.equal(data);
+		expect(selectSuggestedEmojiForQuery(state)).to.deep.equal(data); // memoized result
 	});
 });

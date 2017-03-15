@@ -7,15 +7,15 @@ import { MAX_RESULTS } from './constants';
 // For a given query state, returns the search term as a string:
 export const selectSearchTermForQuery = queryState => queryState.searchTerm.join('');
 
-// Creates a memoized selector for a given query state that
-// returns a list of suggested emoji that match the search term:
-export const createSelectSuggestedEmojiForQuery = () => {
+// Creates a memoized selector for a given query state that returns a list
+// of suggested emoji that match the search term based on provided data:
+export const createSelectSuggestedEmojiForQuery = (data) => {
 	// reselect.createSelector cannot create parameterized selectors,
 	// so we implement our own solution here in order to allow
 	// search data to be passed in from the outside
 	let lastSearchTerm = null;
 	let memoizedSuggestedEmoji = null;
-	return (queryState, data) => {
+	return (queryState) => {
 		const searchTerm = selectSearchTermForQuery(queryState);
 		if (searchTerm === lastSearchTerm) {
 			return memoizedSuggestedEmoji;

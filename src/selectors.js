@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import { selectSearchTermForQuery } from './query-selectors';
 
 const selectInput = state => state.input;
-const selectData = state => state.input.data;
 const selectQueries = state => state.input.queries;
 
 // Returns the most recent query:
@@ -31,11 +30,10 @@ const selectSubmittedEmoji = createSelector(
 );
 
 const selectSuggestedEmoji = createSelector(
-	selectData,
 	selectCurrentQuery,
 	selectCurrentQuerySelectedSuggestionIndex,
-	(data, currentQuery, selectedSuggestionIndex) =>
-		currentQuery.suggestedEmoji(currentQuery, data) // need to pass in the query state and data explicitly
+	(currentQuery, selectedSuggestionIndex) =>
+		currentQuery.findSuggestedEmoji(currentQuery) // need to pass in the query state explicitly
 		.map((result, index) => {
 			const unselectedEmoji = `${result.output} `;
 			const selectedEmoji = chalk.underline.yellow(unselectedEmoji);
@@ -44,11 +42,10 @@ const selectSuggestedEmoji = createSelector(
 );
 
 const selectSelectedSuggestedEmojiDescription = createSelector(
-	selectData,
 	selectCurrentQuery,
 	selectCurrentQuerySelectedSuggestionIndex,
-	(data, currentQuery, selectedSuggestionIndex) => {
-		const suggestedEmoji = currentQuery.suggestedEmoji(currentQuery, data); // need to pass in the query state and data explicitly
+	(currentQuery, selectedSuggestionIndex) => {
+		const suggestedEmoji = currentQuery.findSuggestedEmoji(currentQuery); // need to pass in the query state explicitly
 		const selectedSuggestedEmoji = suggestedEmoji[selectedSuggestionIndex];
 		if (selectedSuggestedEmoji == null) {
 			return '';
@@ -121,7 +118,6 @@ const selectStyledInput = createSelector(
 // Export of internals used for testing:
 export const internals = {
 	selectInput,
-	selectData,
 	selectQueries,
 	selectCurrentQuery,
 	selectCurrentQuerySearchTerm,
@@ -139,5 +135,6 @@ export const internals = {
 export {
 	selectInput,
 	selectQueries,
+	selectCurrentQuerySearchTerm,
 	selectStyledInput,
 };

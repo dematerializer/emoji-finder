@@ -1,6 +1,5 @@
 import queryReducer from './query-reducer';
 import {
-	SET_DATA,
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
 	SELECT_NEXT_SUGGESTION,
@@ -9,7 +8,9 @@ import {
 	RESET,
 	SELECT_PREVIOUS_QUERY,
 	SELECT_NEXT_QUERY,
+	SET_FIND_SUGGESTED_EMOJI,
 } from './constants';
+import { setFindSuggestedEmoji } from './actions';
 
 // Returns the most recent query:
 const selectCurrentQuery = state => state.queries[state.queries.length - 1];
@@ -19,10 +20,10 @@ export const internals = {
 	selectCurrentQuery,
 };
 
+const emptyResult = () => [];
+
 // Initial state of the input module:
 const initialState = {
-	// Emoji data to search:
-	data: null,
 	// User typed-in queries each
 	// resulting in an single emoji:
 	queries: [
@@ -35,21 +36,13 @@ const initialState = {
 	history: [],
 	// Current position in the history:
 	positionInHistory: -1,
+	// Current selector function that selects a list
+	// of suggested emoji that match the search term:
+	findSuggestedEmoji: emptyResult, // initially empty
 };
 
 export default function reducer(state = initialState, action) {
-	// Inoperable without data:
-	if (action.type !== SET_DATA && state.data == null) {
-		return state;
-	}
 	switch (action.type) {
-		// Emoji data is being set:
-		case SET_DATA: {
-			return {
-				...state,
-				data: action.data,
-			};
-		}
 		// A character is being added:
 		case ADD_CHARACTER: {
 			// Let the current query handle the action
@@ -58,7 +51,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query),
 				),
 				positionInHistory: -1,
 			};
@@ -79,7 +72,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query),
 				),
 				positionInHistory: -1,
 			};
@@ -92,7 +85,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query),
 				),
 				positionInHistory: -1,
 			};
@@ -105,7 +98,7 @@ export default function reducer(state = initialState, action) {
 			return {
 				...state,
 				queries: state.queries.map(query =>
-					((query === currentQuery) ? queryReducer(currentQuery, action, state.data) : query),
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query),
 				),
 				positionInHistory: -1,
 			};
@@ -119,8 +112,8 @@ export default function reducer(state = initialState, action) {
 			// let the query handle the action, update it's
 			// state with the new result and initialize a new query:
 			// istanbul ignore else
-			if (searchTermLength > 0 && currentQuery.suggestedEmoji(currentQuery, state.data).length > 0) {
-				const submittedQuery = queryReducer(currentQuery, action, state.data);
+			if (searchTermLength > 0 && currentQuery.findSuggestedEmoji(currentQuery).length > 0) {
+				const submittedQuery = queryReducer(currentQuery, action);
 				const updatedQueries = state.queries.map(query =>
 					((query === currentQuery) ? submittedQuery : query),
 				);
@@ -130,7 +123,7 @@ export default function reducer(state = initialState, action) {
 					|| currentQuery.selectedSuggestionIndex !== state.history[0].selectedSuggestionIndex;
 				return {
 					...state,
-					queries: [...updatedQueries, queryReducer(undefined, { type: 'INIT' })],
+					queries: [...updatedQueries, queryReducer(undefined, setFindSuggestedEmoji(state.findSuggestedEmoji))],
 					history: addToHistory ? [currentQuery, ...state.history] : state.history,
 					positionInHistory: -1,
 				};
@@ -138,18 +131,16 @@ export default function reducer(state = initialState, action) {
 			} else if (state.queries.some(q => q.emoji != null)) {
 				return {
 					...state,
-					data: state.data,
 					submitted: true,
 				};
 			}
 			// istanbul ignore next
 			return state;
 		}
-		// Reset everything but data and history:
+		// Reset everything but history:
 		case RESET: {
 			return {
 				...initialState,
-				data: state.data,
 				history: state.history,
 				positionInHistory: state.positionInHistory,
 			};
@@ -181,7 +172,7 @@ export default function reducer(state = initialState, action) {
 			if (newIndexInHistory > -1) {
 				newCurrentQuery = state.history[newIndexInHistory];
 			} else {
-				newCurrentQuery = queryReducer(undefined, { type: 'INIT' });
+				newCurrentQuery = queryReducer(undefined, setFindSuggestedEmoji(emptyResult));
 			}
 			const updatedQueries = state.queries.map(query =>
 				((query === currentQuery) ? newCurrentQuery : query),
@@ -190,6 +181,17 @@ export default function reducer(state = initialState, action) {
 				...state,
 				positionInHistory: newIndexInHistory,
 				queries: updatedQueries,
+			};
+		}
+		case SET_FIND_SUGGESTED_EMOJI: {
+			const currentQuery = selectCurrentQuery(state);
+			return {
+				...state,
+				findSuggestedEmoji: action.findSuggestedEmoji,
+				queries: state.queries.map(query =>
+					((query === currentQuery) ? queryReducer(currentQuery, action) : query),
+				),
+				positionInHistory: -1,
 			};
 		}
 		default:

@@ -1,5 +1,4 @@
 import {
-	SET_DATA,
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
 	SELECT_NEXT_SUGGESTION,
@@ -8,12 +7,8 @@ import {
 	RESET,
 	SELECT_PREVIOUS_QUERY,
 	SELECT_NEXT_QUERY,
+	SET_FIND_SUGGESTED_EMOJI,
 } from './constants';
-
-export const setData = data => ({
-	type: SET_DATA,
-	data,
-});
 
 export const addCharacter = character => ({
 	type: ADD_CHARACTER,
@@ -46,4 +41,9 @@ export const selectPreviousQuery = () => ({
 
 export const selectNextQuery = () => ({
 	type: SELECT_NEXT_QUERY,
+});
+
+export const setFindSuggestedEmoji = findSuggestedEmoji => ({
+	type: SET_FIND_SUGGESTED_EMOJI,
+	findSuggestedEmoji,
 });

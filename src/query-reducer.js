@@ -1,10 +1,10 @@
-import { createSelectSuggestedEmojiForQuery } from './query-selectors';
 import {
 	ADD_CHARACTER,
 	REMOVE_CHARACTER,
 	SELECT_NEXT_SUGGESTION,
 	SELECT_PREVIOUS_SUGGESTION,
 	SUBMIT,
+	SET_FIND_SUGGESTED_EMOJI,
 } from './constants';
 
 // Clamps a given value between (including) min and max, cycling if out of bounds:
@@ -32,19 +32,12 @@ const initialState = {
 	selectedSuggestionIndex: 0,
 	// Resulting 'submitted' emoji:
 	emoji: null,
-	// Memoized selector for this query instance that selects
+	// Selector function for this query instance that selects
 	// a list of suggested emoji that match the search term:
-	suggestedEmoji: createSelectSuggestedEmojiForQuery(),
+	findSuggestedEmoji: () => [], // initially empty
 };
 
-// NOTE: For some actions this needs data from the input reducer
-// to pass it on to the suggestedEmoji selector.
-
-export default function reducer(state = initialState, action, data) {
-	// Inoperable without data:
-	if (data == null) {
-		return state;
-	}
+export default function reducer(state = initialState, action) {
 	switch (action.type) {
 		// A character is being added:
 		case ADD_CHARACTER:
@@ -72,7 +65,7 @@ export default function reducer(state = initialState, action, data) {
 			};
 		// Next suggestion is being selected:
 		case SELECT_NEXT_SUGGESTION: {
-			const numSuggestions = state.suggestedEmoji(state, data).length; // memoized
+			const numSuggestions = state.findSuggestedEmoji(state).length; // memoized
 			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
@@ -84,7 +77,7 @@ export default function reducer(state = initialState, action, data) {
 		}
 		// Previous suggestion is being selected:
 		case SELECT_PREVIOUS_SUGGESTION: {
-			const numSuggestions = state.suggestedEmoji(state, data).length; // memoized
+			const numSuggestions = state.findSuggestedEmoji(state).length; // memoized
 			if (numSuggestions === 0) { // skip when no suggestions
 				return state;
 			}
@@ -96,7 +89,7 @@ export default function reducer(state = initialState, action, data) {
 		}
 		// Selected emoji is being submitted:
 		case SUBMIT: {
-			const suggestions = state.suggestedEmoji(state, data); // memoized
+			const suggestions = state.findSuggestedEmoji(state); // memoized
 			if (suggestions.length === 0) {
 				return state;
 			}
@@ -104,6 +97,12 @@ export default function reducer(state = initialState, action, data) {
 			return {
 				...state,
 				emoji: suggestions[state.selectedSuggestionIndex].output,
+			};
+		}
+		case SET_FIND_SUGGESTED_EMOJI: {
+			return {
+				...state,
+				findSuggestedEmoji: action.findSuggestedEmoji, // override the function
 			};
 		}
 		default:

@@ -2,11 +2,6 @@ import * as actions from '../actions';
 import * as types from '../constants';
 
 describe('actions', () => {
-	it('should create an action to set data', () => {
-		const data = [1, 2, 3];
-		const expectedAction = { type: types.SET_DATA, data };
-		expect(actions.setData(data)).to.deep.equal(expectedAction);
-	});
 	it('should create an action to add a character', () => {
 		const character = 'a';
 		const expectedAction = { type: types.ADD_CHARACTER, character };
@@ -39,5 +34,13 @@ describe('actions', () => {
 	it('should create an action to go forward in the history of submitted queries', () => {
 		const expectedAction = { type: types.SELECT_NEXT_QUERY };
 		expect(actions.selectNextQuery()).to.deep.equal(expectedAction);
+	});
+	it('should create an action to set the selector function that is used to find suggested emoji', () => {
+		const findSuggestedEmoji = () => [];
+		const expectedAction = {
+			type: types.SET_FIND_SUGGESTED_EMOJI,
+			findSuggestedEmoji,
+		};
+		expect(actions.setFindSuggestedEmoji(findSuggestedEmoji)).to.deep.equal(expectedAction);
 	});
 });

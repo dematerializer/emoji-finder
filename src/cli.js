@@ -5,19 +5,14 @@
 import 'regenerator-runtime/runtime';
 
 import { combineReducers, createStore, applyMiddleware } from 'redux';
-import createSagaMiddleware, { takeEvery } from 'redux-saga';
-import { select } from 'redux-saga/effects';
+import createSagaMiddleware from 'redux-saga';
 import logUpdate from 'log-update';
-import copyPaste from 'copy-paste';
-import chalk from 'chalk';
 import readline from 'readline';
 import hasAnsi from 'has-ansi';
 import meow from 'meow';
 
 import inputReducer from './reducer';
-import { SUBMIT } from './constants';
 import {
-	setData,
 	addCharacter,
 	removeCharacter,
 	selectNextSuggestion,
@@ -25,19 +20,23 @@ import {
 	submit,
 	selectPreviousQuery,
 	selectNextQuery,
+	setFindSuggestedEmoji,
 } from './actions';
 import getDataForLanguage from './data';
-import {
-	selectInput,
-	selectQueries,
-	selectStyledInput,
-} from './selectors';
+import { inputEmojiSequenceSubmitted, currentQueryChanged } from './sagas';
+import { selectStyledInput } from './selectors';
+import { createSelectSuggestedEmojiForQuery } from './query-selectors';
 
 const cli = meow(`
     Usage
       $ emoji-finder [de|en]
 
-    Run without arguments to use the language set in
+    Options
+      --dango Use dango (https://getdango.com/),
+              internet connectivity required,
+              sets input language to 'en'.
+
+    Run without arguments to use the input language set in
     your environment (echo $LANG). Falls back to 'en' if
     not available or not supported.
 `);
@@ -55,7 +54,7 @@ const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 // Set emoji data:
 
 const languageFromEnv = (process.env.LANG || 'en').split('.')[0].split('_')[0];
-const languageFromArgs = cli.input[0];
+const languageFromArgs = cli.flags.dango ? 'en' : cli.input[0];
 let language = languageFromArgs || languageFromEnv;
 
 if (!['en', 'de'].includes(language)) {
@@ -67,31 +66,15 @@ if (!['en', 'de'].includes(language)) {
 	logUpdate.done();
 }
 
-store.dispatch(setData(getDataForLanguage(language)));
-
-// Listen for SUBMIT actions.
-// If the input emoji sequence needs to be submitted,
-// copy the sequence of emoji to the clipboard, print
-// out a final message and exit the application:
-
-function* copyEmojiSequenceAndExit() {
-	const input = yield select(selectInput);
-	if (!input.submitted) {
-		return;
-	}
-	const queries = yield select(selectQueries);
-	const emojiSequence = queries.filter(query => query.emoji != null).map(query => query.emoji).join('');
-	copyPaste.copy(emojiSequence);
-	logUpdate(chalk.yellow('💾 📋 ✓'));
-	logUpdate.done();
-	process.exit(0);
-}
-
-function* inputEmojiSequenceSubmitted() {
-	yield takeEvery(SUBMIT, copyEmojiSequenceAndExit);
-}
+const data = getDataForLanguage(language);
 
 sagaMiddleware.run(inputEmojiSequenceSubmitted);
+
+if (cli.flags.dango) {
+	sagaMiddleware.run(currentQueryChanged, data); // data still needed for annotations!
+} else {
+	store.dispatch(setFindSuggestedEmoji(createSelectSuggestedEmojiForQuery(data)));
+}
 
 // Render once initially and every time the store changes:
 

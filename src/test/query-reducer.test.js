@@ -21,20 +21,13 @@ describe('query-reducer', () => {
 
 	it('should return the initial state', () => {
 		const initialState = reducer(undefined, {});
-		expect(initialState).to.have.all.keys('searchTerm', 'selectedSuggestionIndex', 'emoji', 'suggestedEmoji');
+		expect(initialState).to.have.all.keys('searchTerm', 'selectedSuggestionIndex', 'emoji', 'findSuggestedEmoji');
 		expect(initialState.searchTerm).to.deep.equal([]);
 		expect(initialState.selectedSuggestionIndex).to.equal(0);
 		expect(initialState.emoji).to.equal(null);
-		expect(initialState.suggestedEmoji).to.be.a('function');
-	});
-
-	it('should be inoperable if data is not passed to the reducer', () => {
-		const stateBefore = { searchTerm: ['a'], selectedSuggestionIndex: 1 };
-		expect(reducer(stateBefore, actions.addCharacter('b'))).to.deep.equal(stateBefore);
-		expect(reducer(stateBefore, actions.removeCharacter())).to.deep.equal(stateBefore);
-		expect(reducer(stateBefore, actions.selectNextSuggestion())).to.deep.equal(stateBefore);
-		expect(reducer(stateBefore, actions.selectPreviousSuggestion())).to.deep.equal(stateBefore);
-		expect(reducer(stateBefore, actions.submit())).to.deep.equal(stateBefore);
+		expect(initialState.findSuggestedEmoji).to.be.a('function');
+		expect(initialState.findSuggestedEmoji()).to.be.an('array');
+		expect(initialState.findSuggestedEmoji().length).to.equal(0);
 	});
 
 	it('should return the same state if the action is not recognized', () => {
@@ -84,66 +77,66 @@ describe('query-reducer', () => {
 
 	it('should select the next suggestion', () => {
 		// [1, 2, 3] | 0 => 1
-		let suggestedEmoji = () => [1, 2, 3];
-		let stateBefore = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		let findSuggestedEmoji = () => [1, 2, 3];
+		let stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		let stateAfter = reducer(stateBefore, actions.selectNextSuggestion(), mockedData);
-		let expectedState = { suggestedEmoji, selectedSuggestionIndex: 1 };
+		let expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 1 };
 		expect(stateAfter).to.deep.equal(expectedState);
 
 		// [1, 2, 3] | 2 => 0 // cycle from last to first
-		stateBefore = { suggestedEmoji, selectedSuggestionIndex: 2 };
+		stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 2 };
 		stateAfter = reducer(stateBefore, actions.selectNextSuggestion(), mockedData);
-		expectedState = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		expect(stateAfter).to.deep.equal(expectedState);
 
 		// [] | 0 => 0
-		suggestedEmoji = () => [];
-		stateBefore = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		findSuggestedEmoji = () => [];
+		stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		stateAfter = reducer(stateBefore, actions.selectNextSuggestion(), mockedData);
-		expectedState = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
 
 	it('should select the previous suggestion', () => {
 		// [1, 2, 3] | 2 => 1 // cycle from last to first
-		let suggestedEmoji = () => [1, 2, 3];
-		let stateBefore = { suggestedEmoji, selectedSuggestionIndex: 2 };
+		let findSuggestedEmoji = () => [1, 2, 3];
+		let stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 2 };
 		let stateAfter = reducer(stateBefore, actions.selectPreviousSuggestion(), mockedData);
-		let expectedState = { suggestedEmoji, selectedSuggestionIndex: 1 };
+		let expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 1 };
 		expect(stateAfter).to.deep.equal(expectedState);
 
 		// [1, 2, 3] | 0 => 2 // cycle from first to last
-		stateBefore = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		stateAfter = reducer(stateBefore, actions.selectPreviousSuggestion(), mockedData);
-		expectedState = { suggestedEmoji, selectedSuggestionIndex: 2 };
+		expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 2 };
 		expect(stateAfter).to.deep.equal(expectedState);
 
 		// [] | 0 => 0
-		suggestedEmoji = () => [];
-		stateBefore = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		findSuggestedEmoji = () => [];
+		stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		stateAfter = reducer(stateBefore, actions.selectPreviousSuggestion(), mockedData);
-		expectedState = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
 
 	it('should submit the selected suggested emoji', () => {
-		let suggestedEmoji = () => [
+		let findSuggestedEmoji = () => [
 			{ output: 'A' },
 			{ output: 'B' },
 			{ output: 'C' },
 		];
 
 		// Submit C at index 2:
-		let stateBefore = { suggestedEmoji, selectedSuggestionIndex: 2 };
+		let stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 2 };
 		let stateAfter = reducer(stateBefore, actions.submit(), mockedData);
-		let expectedState = { suggestedEmoji, selectedSuggestionIndex: 2, emoji: 'C' };
+		let expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 2, emoji: 'C' };
 		expect(stateAfter).to.deep.equal(expectedState);
 
 		// Don't submit when no suggestions:
-		suggestedEmoji = () => [];
-		stateBefore = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		findSuggestedEmoji = () => [];
+		stateBefore = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		stateAfter = reducer(stateBefore, actions.submit(), mockedData);
-		expectedState = { suggestedEmoji, selectedSuggestionIndex: 0 };
+		expectedState = { findSuggestedEmoji, selectedSuggestionIndex: 0 };
 		expect(stateAfter).to.deep.equal(expectedState);
 	});
 });

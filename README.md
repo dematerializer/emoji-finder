@@ -6,7 +6,7 @@
 - interactive UI that allows for manually composing sequences of emoji that you can copy to the clipboard
 - fuzzy, offline search supporting multiple input languages (currently English and German)
 - based on [unicode-emoji-data](https://www.npmjs.com/package/unicode-emoji-data) and [unicode-emoji-annotations](https://www.npmjs.com/package/unicode-emoji-annotations)
-- 🚫🤖🎓 no machine learning involved (yet)
+- NEW: 🤖🎓 machine learning involved (use the experimental `--dango` flag)
 
 Works best on Mac OS. Works great on Linux after installing [Emoji One](https://github.com/eosrei/emojione-color-font#install-on-linux). [Doesn't really work on Windows](https://github.com/sindresorhus/emoj/issues/5).
 
@@ -18,7 +18,12 @@ $ emoji-finder --help
   Usage
     $ emoji-finder [de|en]
 
-  Run without arguments to use the language set in
+  Options
+    --dango Use dango (https://getdango.com/),
+            internet connectivity required,
+            sets input language to 'en'.
+
+  Run without arguments to use the input language set in
   your environment (echo $LANG). Falls back to 'en' if
   not available or not supported.
 ```
