@@ -1,8 +1,8 @@
-import { expandEmojiData, emojiDataStable } from 'unicode-emoji-data';
+import { expandEmojiData, emojiData as emojiDataImport } from 'unicode-emoji-data';
 import { combinedAnnotationsForLanguage } from 'unicode-emoji-annotations';
 import punycode from 'punycode';
 
-const emojiData = expandEmojiData(emojiDataStable);
+const emojiData = expandEmojiData(emojiDataImport);
 
 function groupArrayOfObjectsByKey(array, key) {
 	return array.reduce((curr, obj) => {
