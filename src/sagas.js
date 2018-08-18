@@ -42,6 +42,19 @@ export function* inputEmojiSequenceSubmitted() {
 	yield takeEvery(SUBMIT, copyEmojiSequenceAndExit);
 }
 
+const isAnnotationEqualToHexCode = (ann, seqHex) => {
+	const { sequence, presentation = {} } = ann;
+	const { default: defaultPresentation = '', variation = {} } = presentation;
+	const { text = '', emoji = '' } = variation;
+
+	return (
+		sequence === seqHex ||
+		defaultPresentation === seqHex ||
+		text === seqHex ||
+		emoji === seqHex
+	);
+};
+
 // Takes ADD_CHARACTER, REMOVE_CHARACTER and SUBMIT actions.
 // Tells the dango API to search emoji that match the current
 // search term and annotates the results. It then creates a
@@ -61,7 +74,13 @@ function* searchDango(annotations) {
 	const suggestedEmoji = results.map((result) => {
 		const seq = punycode.ucs2.decode(result.text);
 		const seqHex = seq.map(cp => leftPad(cp.toString(16), 4, 0).toUpperCase()).join(' ');
-		const annotation = annotations.find(ann => ann.sequence === seqHex);
+		const annotation = annotations.find(ann =>
+			isAnnotationEqualToHexCode(ann, seqHex),
+		) || {
+			output: '',
+			tts: '',
+			keywords: [''],
+		};
 		return {
 			output: annotation.output,
 			tts: annotation.tts,
